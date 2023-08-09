@@ -1,6 +1,7 @@
 package com.BEACON.beacon.domain;
 
-import com.BEACON.beacon.dao.Member;
+import com.BEACON.beacon.domain.user.domain.Member;
+import com.BEACON.beacon.domain.user.dao.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 class MemberRepositoryTest {
-    @Autowired MemberRepository memberRepository;
+    @Autowired
+    MemberRepository memberRepository;
 
     @Test
     @Transactional
