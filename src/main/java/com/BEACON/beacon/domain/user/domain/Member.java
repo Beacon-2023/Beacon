@@ -1,4 +1,4 @@
-package com.BEACON.beacon.dao;
+package com.BEACON.beacon.domain.user.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
