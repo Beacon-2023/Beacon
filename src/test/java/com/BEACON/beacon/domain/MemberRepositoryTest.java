@@ -1,7 +1,7 @@
 package com.BEACON.beacon.domain;
 
-import com.BEACON.beacon.domain.user.domain.Member;
-import com.BEACON.beacon.domain.user.dao.MemberRepository;
+import com.BEACON.beacon.user.domain.Member;
+import com.BEACON.beacon.user.dao.MemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

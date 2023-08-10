@@ -1,7 +1,9 @@
-package com.BEACON.beacon.domain.scraping.service;
+package com.BEACON.beacon.scraping.service;
 
-import com.BEACON.beacon.domain.scraping.dto.DisasterDto;
-import com.BEACON.beacon.domain.scraping.repository.ScrapingRepository;
+import static com.BEACON.beacon.scraping.dto.DisasterAlertMapper.toEntity;
+
+import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
+import com.BEACON.beacon.scraping.repository.ScrapingRepository;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -13,6 +15,7 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class ScrapingService {
     private final ScrapingRepository repository;
 
     @Scheduled(fixedRate = 10000)
+    @Transactional
     public void scrapingDisasterInfo() throws IOException {
         // 국민재난안전포털 쿠키 받아오기
         Map<String, String> cookies = getSafeKoreaCookies();
@@ -44,23 +48,24 @@ public class ScrapingService {
 //        if(!resultCode.equals("0"))
 
         JSONArray disasterSmsList = responseJson.getJSONArray("disasterSmsList");
-        for(int i=0; i<disasterSmsList.length(); i++) {
+        for (int i = 0; i < disasterSmsList.length(); i++) {
             JSONObject obj = disasterSmsList.getJSONObject(i);
+            long alertId = obj.getLong("MD101_SN");
             String disasterName = obj.getString("DSSTR_SE_NM");
             String createdAt = obj.getString("CREAT_DT");
             String receivedAreaName = obj.getString("RCV_AREA_NM");
             String content = obj.getString("MSG_CN");
 
-            DisasterDto dto = new DisasterDto(disasterName, createdAt, receivedAreaName, content);
-            if(!isDuplicated(dto)) {
-                repository.save(dto);
+            DisasterAlertDto dto = new DisasterAlertDto(alertId, disasterName, createdAt,
+                    receivedAreaName, content);
+            if (!isDuplicated(dto)) {
+                repository.save(toEntity(dto));
             }
         }
     }
 
-    // TODO : 중복 재난 체크
-    private boolean isDuplicated(DisasterDto dto) {
-        return false;
+    private boolean isDuplicated(DisasterAlertDto dto) {
+        return repository.findById(dto.getId()) != null;
     }
 
     private Map<String, String> getSafeKoreaCookies() throws IOException {
@@ -72,7 +77,8 @@ public class ScrapingService {
                 .header("Connection", "keep-alive")
                 .header("Host", "www.safekorea.go.kr")
                 .header("Origin", "https://www.safekorea.go.kr")
-                .header("Sec-Ch-Ua", "\"Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"115\", \"Chromium\";v=\"115\"")
+                .header("Sec-Ch-Ua",
+                        "\"Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"115\", \"Chromium\";v=\"115\"")
                 .header("Sec-Ch-Ua-Mobile", "?0")
                 .header("Sec-Ch-Ua-Platform", "\"Windows\"")
                 .method(Connection.Method.POST)
@@ -80,7 +86,8 @@ public class ScrapingService {
                 .cookies();
     }
 
-    private Connection.Response sendDisasterRequest(Map<String, String> cookies, JSONObject searchInfoJson) throws IOException {
+    private Connection.Response sendDisasterRequest(Map<String, String> cookies,
+            JSONObject searchInfoJson) throws IOException {
         return Jsoup.connect(DISASTER_URL)
                 .userAgent(USER_AGENT)
                 .timeout(1000)
@@ -89,7 +96,8 @@ public class ScrapingService {
                 .header("Connection", "keep-alive")
                 .header("Host", "www.safekorea.go.kr")
                 .header("Origin", "https://www.safekorea.go.kr")
-                .header("Sec-Ch-Ua", "\"Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"115\", \"Chromium\";v=\"115\"")
+                .header("Sec-Ch-Ua",
+                        "\"Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"115\", \"Chromium\";v=\"115\"")
                 .header("Sec-Ch-Ua-Mobile", "?0")
                 .header("Sec-Ch-Ua-Platform", "\"Windows\"")
                 .header("Sec-Fetch-Dest", "empty")
@@ -98,7 +106,8 @@ public class ScrapingService {
                 .header("Accept", "application/json")
                 .header("Content-Length", String.valueOf(searchInfoJson.toString().length()))
                 .header("Content-Type", "application/json; charset=UTF-8")
-                .header("Referer", "https://www.safekorea.go.kr/idsiSFK/neo/sfk/cs/sfc/dis/disasterMsgList.jsp?menuSeq=679")
+                .header("Referer",
+                        "https://www.safekorea.go.kr/idsiSFK/neo/sfk/cs/sfc/dis/disasterMsgList.jsp?menuSeq=679")
                 .header("X-Requested-With", "XMLHttpRequest")
                 .requestBody(searchInfoJson.toString())
                 .cookies(cookies)

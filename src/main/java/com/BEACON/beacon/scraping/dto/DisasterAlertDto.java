@@ -1,23 +1,15 @@
-package com.BEACON.beacon.domain.scraping.domain;
+package com.BEACON.beacon.scraping.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Disaster {
-
-    @Id @GeneratedValue
-    @Column(name = "disaster_id")
+public class DisasterAlertDto {
     private Long id;
 
     private String disasterName;
@@ -27,6 +19,4 @@ public class Disaster {
     private String receivedAreaName;
 
     private String content;
-
 }
-

@@ -1,6 +1,6 @@
-package com.BEACON.beacon.domain.user.dao;
+package com.BEACON.beacon.user.dao;
 
-import com.BEACON.beacon.domain.user.domain.Member;
+import com.BEACON.beacon.user.domain.Member;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
