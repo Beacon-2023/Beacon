@@ -30,6 +30,9 @@ public class ScrapingService {
 
     private final ScrapingRepository repository;
 
+    /**
+     * 홈페이지에서 재난 정보를 스크래핑 10초에 한 번씩 실행되도록 스케쥴링되어 있음
+     */
     @Scheduled(fixedRate = 10000)
     @Transactional
     public void scrapingDisasterInfo() throws IOException {
@@ -42,11 +45,6 @@ public class ScrapingService {
 
         JSONObject responseJson = new JSONObject(response.body());
 
-//        TODO : 스크래핑 예외 처리
-//        String resultCode = responseJson.getJSONObject("rtnResult").getJSONObject("resultCode")
-//                .toString();
-//        if(!resultCode.equals("0"))
-
         JSONArray disasterSmsList = responseJson.getJSONArray("disasterSmsList");
         for (int i = 0; i < disasterSmsList.length(); i++) {
             JSONObject obj = disasterSmsList.getJSONObject(i);
@@ -58,16 +56,21 @@ public class ScrapingService {
 
             DisasterAlertDto dto = new DisasterAlertDto(alertId, disasterName, createdAt,
                     receivedAreaName, content);
-            if (!isDuplicated(dto)) {
+            if (!isDuplicatedAlert(dto)) {
                 repository.save(toEntity(dto));
             }
         }
     }
 
-    private boolean isDuplicated(DisasterAlertDto dto) {
-        return repository.findById(dto.getId()) != null;
+    private boolean isDuplicatedAlert(DisasterAlertDto dto) {
+        return !repository.existsById(dto.getId());
     }
 
+    /**
+     * 홈페이지로부터 쿠키 받아오기
+     *
+     * @return 쿠키
+     */
     private Map<String, String> getSafeKoreaCookies() throws IOException {
         return Jsoup.connect(SAFEKOREA_HOME_URL)
                 .userAgent(USER_AGENT)
@@ -86,6 +89,13 @@ public class ScrapingService {
                 .cookies();
     }
 
+    /**
+     * cookies 와 payload 를 인자로 받아서 홈페이지에 request 전송
+     *
+     * @param cookies        request 와 함께 보내져야 하는 쿠키
+     * @param searchInfoJson JSON payload
+     * @return 서버로부터 받은 response
+     */
     private Connection.Response sendDisasterRequest(Map<String, String> cookies,
             JSONObject searchInfoJson) throws IOException {
         return Jsoup.connect(DISASTER_URL)
@@ -116,6 +126,11 @@ public class ScrapingService {
                 .execute();
     }
 
+    /**
+     * SearchInfo 를 위한 JSON payload 생성
+     *
+     * @return 생성된 JSON payload
+     */
     private JSONObject generatePayloadJson() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate now = LocalDate.now();

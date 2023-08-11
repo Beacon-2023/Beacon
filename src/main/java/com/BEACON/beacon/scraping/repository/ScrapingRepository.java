@@ -7,20 +7,13 @@ import com.BEACON.beacon.scraping.domain.DisasterAlert;
 import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ScrapingRepository {
+public interface ScrapingRepository extends JpaRepository<DisasterAlert, Long> {
 
-    @PersistenceContext
-    EntityManager em;
-
-    public void save(DisasterAlert disasterAlert) {
-        em.persist(disasterAlert);
-    }
-
-    public DisasterAlert findById(Long id) {
-        return em.find(DisasterAlert.class, id);
-    }
+    @Override
+    boolean existsById(Long id);
 
 }
