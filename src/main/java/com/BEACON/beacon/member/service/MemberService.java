@@ -12,9 +12,11 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void registrationMember(MemberEntity memberEntity){
+    public Long registrationMember(MemberEntity memberEntity){
 
-        memberRepository.save(memberEntity);
+       MemberEntity member =  memberRepository.save(memberEntity);
+
+       return member.getId();
     }
 
     /**
