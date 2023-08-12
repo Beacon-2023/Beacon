@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class DisasterAlert {
 
     @Id
@@ -28,5 +27,13 @@ public class DisasterAlert {
 
     private String content;
 
+    public DisasterAlert(Long id, String disasterName, String createdAt, String receivedAreaName,
+            String content) {
+        this.id = id;
+        this.disasterName = disasterName;
+        this.createdAt = createdAt;
+        this.receivedAreaName = receivedAreaName;
+        this.content = content;
+    }
 }
 

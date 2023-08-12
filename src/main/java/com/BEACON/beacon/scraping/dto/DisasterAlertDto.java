@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class DisasterAlertDto {
 
     private Long id;
@@ -22,4 +21,12 @@ public class DisasterAlertDto {
 
     private String content;
 
+    public DisasterAlertDto(Long id, String disasterName, String createdAt, String receivedAreaName,
+            String content) {
+        this.id = id;
+        this.disasterName = disasterName;
+        this.createdAt = createdAt;
+        this.receivedAreaName = receivedAreaName;
+        this.content = content;
+    }
 }
