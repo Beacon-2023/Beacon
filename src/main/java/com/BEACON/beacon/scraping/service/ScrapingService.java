@@ -62,6 +62,12 @@ public class ScrapingService {
         }
     }
 
+    /**
+     * 인자로 들어온 DisasterAlertDto가 DB에 이미 저장되어 있는지 여부를 체크
+     *
+     * @param dto
+     * @return true : DB에 이미 값이 존재함 / false : 새로운 재난문자
+     */
     private boolean isDuplicatedAlert(DisasterAlertDto dto) {
         return !repository.existsById(dto.getId());
     }

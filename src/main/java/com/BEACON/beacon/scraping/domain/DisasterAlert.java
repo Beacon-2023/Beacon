@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class DisasterAlert {
 
     @Id
-    @Column(name = "disaster_id")
+    @Column(name = "DISASTER_ID")
     private Long id;
 
     private String disasterName;
