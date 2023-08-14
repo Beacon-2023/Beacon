@@ -9,6 +9,4 @@ import java.io.Serializable;
 @Builder
 public class SessionDto implements Serializable {
     private String userId;
-    private String password;
-
 }

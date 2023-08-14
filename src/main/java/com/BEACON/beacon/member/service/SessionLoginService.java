@@ -18,7 +18,6 @@ public class SessionLoginService {
 
         SessionDto sessionDto = SessionDto.builder()
                 .userId(member.getUserId())
-                .password(member.getPassword())
                 .build();
 
         HttpSession session = request.getSession();
