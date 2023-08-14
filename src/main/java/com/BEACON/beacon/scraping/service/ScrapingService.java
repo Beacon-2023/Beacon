@@ -3,6 +3,7 @@ package com.BEACON.beacon.scraping.service;
 import static com.BEACON.beacon.scraping.dto.DisasterAlertMapper.toEntity;
 
 import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
+import com.BEACON.beacon.scraping.exception.DuplicatedAlertException;
 import com.BEACON.beacon.scraping.repository.ScrapingRepository;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -36,39 +37,15 @@ public class ScrapingService {
     @Scheduled(fixedRate = 10000)
     @Transactional
     public void scrapingDisasterInfo() throws IOException {
-        // 국민재난안전포털 쿠키 받아오기
         Map<String, String> cookies = getSafeKoreaCookies();
 
-        // 재난문자 가져오기
         JSONObject searchInfoJson = generatePayloadJson();
         Connection.Response response = sendDisasterRequest(cookies, searchInfoJson);
 
         JSONObject responseJson = new JSONObject(response.body());
-
         JSONArray disasterSmsList = responseJson.getJSONArray("disasterSmsList");
-        for (int i = 0; i < disasterSmsList.length(); i++) {
-            JSONObject obj = disasterSmsList.getJSONObject(i);
-            long alertId = obj.getLong("MD101_SN");
-            String disasterName = obj.getString("DSSTR_SE_NM");
-            String createdAt = obj.getString("CREAT_DT");
-            String receivedAreaName = obj.getString("RCV_AREA_NM");
-            String content = obj.getString("MSG_CN");
 
-            DisasterAlertDto dto = new DisasterAlertDto(alertId, disasterName, createdAt,
-                    receivedAreaName, content);
-            if (isUniqueAlert(dto)) {
-                repository.save(toEntity(dto));
-            }
-        }
-    }
-
-    /**
-     * 인자로 들어온 DisasterAlertDto가 DB에 이미 저장되어 있는지 여부를 체크
-     *
-     * @return true : DB에 이미 값이 존재함 / false : 새로운 재난문자
-     */
-    private boolean isUniqueAlert(DisasterAlertDto dto) {
-        return !repository.existsById(dto.getId());
+        saveDisasterInfo(disasterSmsList);
     }
 
     /**
@@ -76,7 +53,7 @@ public class ScrapingService {
      *
      * @return 쿠키
      */
-    private Map<String, String> getSafeKoreaCookies() throws IOException {
+    Map<String, String> getSafeKoreaCookies() throws IOException {
         return Jsoup.connect(SAFEKOREA_HOME_URL)
                 .userAgent(USER_AGENT)
                 .timeout(1000)
@@ -95,13 +72,46 @@ public class ScrapingService {
     }
 
     /**
+     * SearchInfo 를 위한 JSON payload 생성
+     *
+     * @return 생성된 JSON payload
+     */
+    JSONObject generatePayloadJson() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate now = LocalDate.now();
+        String formattedNow = now.format(formatter);
+
+        JSONObject payloadJson = new JSONObject();
+        payloadJson.put("c_ocrc_type", "");
+        payloadJson.put("dstr_se_Id", "");
+        payloadJson.put("firstIndex", "1");
+        payloadJson.put("lastIndex", "1");
+        payloadJson.put("pageIndex", "1");
+        payloadJson.put("pageSize", "10");
+        payloadJson.put("pageUnit", "10");
+        payloadJson.put("rcv_Area_Id", "");
+        payloadJson.put("recordCountPerPage", "10");
+        payloadJson.put("sbLawArea1", "");
+        payloadJson.put("sbLawArea2", "");
+        payloadJson.put("sbLawArea3", "");
+        payloadJson.put("searchBgnDe", formattedNow);
+        payloadJson.put("searchEndDe", formattedNow);
+        payloadJson.put("searchGb", "1");
+        payloadJson.put("searchWrd", "");
+
+        JSONObject searchInfoJson = new JSONObject();
+        searchInfoJson.put("searchInfo", payloadJson);
+        return searchInfoJson;
+    }
+
+    /**
      * cookies 와 payload 를 인자로 받아서 홈페이지에 request 전송
      *
      * @param cookies        request 와 함께 보내져야 하는 쿠키
      * @param searchInfoJson JSON payload
      * @return 서버로부터 받은 response
      */
-    private Connection.Response sendDisasterRequest(Map<String, String> cookies,
+    Connection.Response sendDisasterRequest(Map<String, String> cookies,
             JSONObject searchInfoJson) throws IOException {
         return Jsoup.connect(DISASTER_URL)
                 .userAgent(USER_AGENT)
@@ -132,36 +142,46 @@ public class ScrapingService {
     }
 
     /**
-     * SearchInfo 를 위한 JSON payload 생성
+     * API 응답에서 검색된 재난 정보를 저장합니다.
      *
-     * @return 생성된 JSON payload
+     * @param disasterSmsList 저장할 재난 정보를 포함한 JSONArray
      */
-    private JSONObject generatePayloadJson() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate now = LocalDate.now();
-        String formattedNow = now.format(formatter);
+    void saveDisasterInfo(JSONArray disasterSmsList) {
+        for (int i = 0; i < disasterSmsList.length(); i++) {
+            JSONObject obj = disasterSmsList.getJSONObject(i);
+            DisasterAlertDto dto = buildDisasterAlertDto(obj);
+            if (isUniqueAlert(dto)) {
+                repository.save(toEntity(dto));
+            } else {
+                throw new DuplicatedAlertException();
+            }
+        }
+    }
 
-        JSONObject payloadJson = new JSONObject();
-        payloadJson.put("c_ocrc_type", "");
-        payloadJson.put("dstr_se_Id", "");
-        payloadJson.put("firstIndex", "1");
-        payloadJson.put("lastIndex", "1");
-        payloadJson.put("pageIndex", "1");
-        payloadJson.put("pageSize", "10");
-        payloadJson.put("pageUnit", "10");
-        payloadJson.put("rcv_Area_Id", "");
-        payloadJson.put("recordCountPerPage", "10");
-        payloadJson.put("sbLawArea1", "");
-        payloadJson.put("sbLawArea2", "");
-        payloadJson.put("sbLawArea3", "");
-        payloadJson.put("searchBgnDe", formattedNow);
-        payloadJson.put("searchEndDe", formattedNow);
-        payloadJson.put("searchGb", "1");
-        payloadJson.put("searchWrd", "");
+    /**
+     * 주어진 JSONObject에서 DisasterAlertDto 객체를 구성합니다.
+     *
+     * @param obj 재난 정보를 포함한 JSONObject
+     * @return 재난 정보를 나타내는 DisasterAlertDto 객체
+     */
+    DisasterAlertDto buildDisasterAlertDto(JSONObject obj) {
+        long alertId = obj.getLong("MD101_SN");
+        String disasterName = obj.getString("DSSTR_SE_NM");
+        String createdAt = obj.getString("CREAT_DT");
+        String receivedAreaName = obj.getString("RCV_AREA_NM");
+        String content = obj.getString("MSG_CN");
 
-        JSONObject searchInfoJson = new JSONObject();
-        searchInfoJson.put("searchInfo", payloadJson);
-        return searchInfoJson;
+        return new DisasterAlertDto(alertId, disasterName, createdAt,
+                receivedAreaName, content);
+    }
+
+    /**
+     * 인자로 들어온 DisasterAlertDto가 DB에 이미 저장되어 있는지 여부를 체크합니다.
+     *
+     * @return true : DB에 이미 값이 존재함 / false : 새로운 재난문자
+     */
+    boolean isUniqueAlert(DisasterAlertDto dto) {
+        return !repository.existsById(dto.getId());
     }
 
 }

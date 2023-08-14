@@ -1,62 +1,58 @@
 package com.BEACON.beacon.scraping.service;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-import com.BEACON.beacon.scraping.domain.DisasterAlert;
+import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
+import com.BEACON.beacon.scraping.exception.DuplicatedAlertException;
 import com.BEACON.beacon.scraping.repository.ScrapingRepository;
-import java.util.HashMap;
-import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Connection;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
+@DisplayName("스크래핑 서비스 테스트")
 public class ScrapingServiceTest {
 
-    @Autowired
+    @Mock
     private ScrapingRepository repository;
 
-    @Autowired
-    private ScrapingService service;
+    @InjectMocks
+    private ScrapingService scrapeService;
+
+    private DisasterAlertDto dto;
+
+    @BeforeEach
+    public void setUp() {
+        dto = new DisasterAlertDto(123L, "DisasterName", "2022-01-01",
+                "Seoul", "Disaster alert contents");
+    }
 
     @Test
-    @DisplayName("Test scraping disaster info functionality")
-    void testScrapingDisasterInfo() throws Exception {
-        // given
-        Map<String, String> cookies = new HashMap<>();
-        Connection.Response mockResponse = mock(Connection.Response.class);
+    @DisplayName("중복된 알림의 경우, ")
+    public void whenSavingDuplicateDisasterAlert_thenThrowsUnsupportedOperationException() {
+        when(repository.existsById(dto.getId())).thenReturn(true);
 
-        JSONObject mockJson = new JSONObject();
-        JSONArray mockArray = new JSONArray();
-        JSONObject mockObject = new JSONObject();
-        mockObject.put("MD101_SN", 123456);
-        mockObject.put("DSSTR_SE_NM", "Test Disaster");
-        mockObject.put("CREAT_DT", "2023-08-11");
-        mockObject.put("RCV_AREA_NM", "Test Area");
-        mockObject.put("MSG_CN", "Test content");
-        mockArray.put(mockObject);
-        mockJson.put("disasterSmsList", mockArray);
+        // Prepare the object
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("MD101_SN", dto.getId());
+        jsonObject.put("DSSTR_SE_NM", dto.getDisasterName());
+        jsonObject.put("CREAT_DT", dto.getCreatedAt());
+        jsonObject.put("RCV_AREA_NM", dto.getReceivedAreaName());
+        jsonObject.put("MSG_CN", dto.getContent());
 
-        when(mockResponse.body()).thenReturn(mockJson.toString());
-        when(repository.save(any(DisasterAlert.class))).thenReturn(null);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(jsonObject);
 
-        // when
-        service.scrapingDisasterInfo();
-
-        // then
-        verify(repository, times(1)).save(any(DisasterAlert.class));
+        // Test the saveDisasterInfo method
+        assertThrows(
+                DuplicatedAlertException.class,
+                () -> scrapeService.saveDisasterInfo(jsonArray));
     }
 }
