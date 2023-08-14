@@ -23,5 +23,20 @@ public class SessionLoginService {
 
         HttpSession session = request.getSession();
         session.setAttribute(LOGIN_MEMBER,sessionDto);
+        //세션 만료시간 무한대
+        session.setMaxInactiveInterval(-1);
+    }
+
+    public void logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if(session!=null){
+            session.removeAttribute(LOGIN_MEMBER);
+        }
+    }
+
+    public Object getLoginMember(HttpServletRequest request){
+        HttpSession session = request.getSession();
+
+        return session.getAttribute(LOGIN_MEMBER);
     }
 }
