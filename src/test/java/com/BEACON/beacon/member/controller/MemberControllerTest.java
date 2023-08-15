@@ -3,6 +3,7 @@ package com.BEACON.beacon.member.controller;
 import com.BEACON.beacon.member.domain.MemberEntity;
 import com.BEACON.beacon.member.dto.MemberDto;
 import com.BEACON.beacon.member.service.MemberService;
+import com.BEACON.beacon.member.service.SessionLoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 
 import static org.mockito.ArgumentMatchers.any;
@@ -39,16 +42,22 @@ class MemberControllerTest {
     private MemberService memberService;
 
     @MockBean
+    private SessionLoginService sessionLoginService;
+
+    @MockBean
     private PasswordEncoder passwordEncoder;
 
     private MemberDto memberDto;
     private MemberEntity memberEntity;
     private ObjectMapper objectMapper;
     @BeforeEach
-    void setup(){
+    void setup(WebApplicationContext applicationContext){
         memberDto = new MemberDto("beacon1234","beacon@naver.com","1Q2w3e4r!@");
         memberEntity = MemberDto.toEntity(memberDto,passwordEncoder);
         objectMapper = new ObjectMapper();
+
+        mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext)
+                .build();
     }
 
 
