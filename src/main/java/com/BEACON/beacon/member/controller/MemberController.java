@@ -1,8 +1,12 @@
 package com.BEACON.beacon.member.controller;
 
+import com.BEACON.beacon.global.annotation.LoginRequired;
 import com.BEACON.beacon.member.domain.MemberEntity;
 import com.BEACON.beacon.member.dto.MemberDto;
+import com.BEACON.beacon.member.request.MemberLoginRequestDto;
 import com.BEACON.beacon.member.service.MemberService;
+import com.BEACON.beacon.member.service.SessionLoginService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +23,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
-
+    private final SessionLoginService sessionLoginService;
 
     /**
      * 고객이 입력한 정보로 회원가입을 진행한다.
@@ -56,6 +60,38 @@ public class MemberController {
         return RESPONSE_OK;
     }
 
+    /**
+     * 로그인을 요청.
+     * @param memberDto : 클라이언트에서 입력된 로그인 요청(아이디,비밀번호)
+     * @param request : Http Request
+     * @return
+     * 200: 로그인 성공
+     * 400: 유효하지 않은 유저아이디 / 비밀번호 입니다
+     */
+    @PostMapping("/login")
+    public ResponseEntity<HttpStatus> login(@RequestBody @Valid MemberLoginRequestDto memberDto, HttpServletRequest request){
+
+        boolean isValidMember = memberService.isValidMember(memberDto,passwordEncoder);
+
+        if(isValidMember){
+            sessionLoginService.login(memberDto.getUserId(),request);
+            return RESPONSE_OK;
+        }
+        return RESPONSE_BAD_REQUEST;
+    }
+
+
+    /**
+     * 로그아웃 처리
+     * @param request
+     * @return 200 : 로그아웃 성공
+     */
+    @LoginRequired
+    @GetMapping("/logout")
+    public ResponseEntity<HttpStatus> logout(HttpServletRequest request) {
+        sessionLoginService.logout(request);
+        return RESPONSE_OK;
+    }
 
 }
 

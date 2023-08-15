@@ -1,8 +1,11 @@
 package com.BEACON.beacon.member.service;
 
+import com.BEACON.beacon.global.error.exception.MemberNotFoundException;
 import com.BEACON.beacon.member.dao.MemberRepository;
 import com.BEACON.beacon.member.domain.MemberEntity;
+import com.BEACON.beacon.member.request.MemberLoginRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,5 +40,32 @@ public class MemberService {
     public boolean isDuplicatedEmail(String email){
         return memberRepository.existsByEmail(email);
     }
+
+
+    /**
+     * 사용자가 입력한 비밀번호가 유효한지 검사
+     * @param memberDto
+     * @param passwordEncoder
+     * @return 아이디와 비밀번호가 일치하면 true 아니면 false 반환
+     */
+    public boolean isValidMember(MemberLoginRequestDto memberDto, PasswordEncoder passwordEncoder){
+        MemberEntity member = findMemberByUserId(memberDto.getUserId());
+
+        if(passwordEncoder.matches(memberDto.getPassword(),member.getPassword())){
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * 사용자가 입력한 아이디가 존재하는 지 검사
+     * @param userId
+     * @return MemberEntity or Exception
+     */
+    protected MemberEntity findMemberByUserId(String userId){
+        return memberRepository.findMemberByUserId(userId).orElseThrow(()->new MemberNotFoundException("가입된 회원이 아닙니다"));
+    }
+
 
 }
