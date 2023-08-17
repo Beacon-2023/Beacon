@@ -2,8 +2,8 @@ package com.BEACON.beacon.scraping.service;
 
 import static com.BEACON.beacon.scraping.dto.DisasterAlertMapper.toEntity;
 
+import com.BEACON.beacon.scraping.domain.DisasterCategory;
 import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
-import com.BEACON.beacon.scraping.exception.DuplicatedAlertException;
 import com.BEACON.beacon.scraping.repository.ScrapingRepository;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -32,7 +32,7 @@ public class ScrapingService {
     private final ScrapingRepository repository;
 
     /**
-     * 홈페이지에서 재난 정보를 스크래핑 10초에 한 번씩 실행되도록 스케쥴링되어 있음
+     * 홈페이지에서 재난 정보를 스크래핑 10초에 한 번씩 실행되도록 스케쥴링되어 있습니다.
      */
     @Scheduled(fixedRate = 10000)
     @Transactional
@@ -54,21 +54,14 @@ public class ScrapingService {
      * @return 쿠키
      */
     Map<String, String> getSafeKoreaCookies() throws IOException {
-        return Jsoup.connect(SAFEKOREA_HOME_URL)
-                .userAgent(USER_AGENT)
-                .timeout(1000)
+        return Jsoup.connect(SAFEKOREA_HOME_URL).userAgent(USER_AGENT).timeout(1000)
                 .header("Accept-Encoding", "gzip, deflate, br")
                 .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6")
-                .header("Connection", "keep-alive")
-                .header("Host", "www.safekorea.go.kr")
-                .header("Origin", "https://www.safekorea.go.kr")
-                .header("Sec-Ch-Ua",
+                .header("Connection", "keep-alive").header("Host", "www.safekorea.go.kr")
+                .header("Origin", "https://www.safekorea.go.kr").header("Sec-Ch-Ua",
                         "\"Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"115\", \"Chromium\";v=\"115\"")
-                .header("Sec-Ch-Ua-Mobile", "?0")
-                .header("Sec-Ch-Ua-Platform", "\"Windows\"")
-                .method(Connection.Method.POST)
-                .execute()
-                .cookies();
+                .header("Sec-Ch-Ua-Mobile", "?0").header("Sec-Ch-Ua-Platform", "\"Windows\"")
+                .method(Connection.Method.POST).execute().cookies();
     }
 
     /**
@@ -111,34 +104,22 @@ public class ScrapingService {
      * @param searchInfoJson JSON payload
      * @return 서버로부터 받은 response
      */
-    Connection.Response sendDisasterRequest(Map<String, String> cookies,
-            JSONObject searchInfoJson) throws IOException {
-        return Jsoup.connect(DISASTER_URL)
-                .userAgent(USER_AGENT)
-                .timeout(1000)
+    Connection.Response sendDisasterRequest(Map<String, String> cookies, JSONObject searchInfoJson)
+            throws IOException {
+        return Jsoup.connect(DISASTER_URL).userAgent(USER_AGENT).timeout(1000)
                 .header("Accept-Encoding", "gzip, deflate, br")
                 .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6")
-                .header("Connection", "keep-alive")
-                .header("Host", "www.safekorea.go.kr")
-                .header("Origin", "https://www.safekorea.go.kr")
-                .header("Sec-Ch-Ua",
+                .header("Connection", "keep-alive").header("Host", "www.safekorea.go.kr")
+                .header("Origin", "https://www.safekorea.go.kr").header("Sec-Ch-Ua",
                         "\"Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"115\", \"Chromium\";v=\"115\"")
-                .header("Sec-Ch-Ua-Mobile", "?0")
-                .header("Sec-Ch-Ua-Platform", "\"Windows\"")
-                .header("Sec-Fetch-Dest", "empty")
-                .header("Sec-Fetch-Mode", "cors")
-                .header("Sec-Fetch-Site", "same-origin")
-                .header("Accept", "application/json")
+                .header("Sec-Ch-Ua-Mobile", "?0").header("Sec-Ch-Ua-Platform", "\"Windows\"")
+                .header("Sec-Fetch-Dest", "empty").header("Sec-Fetch-Mode", "cors")
+                .header("Sec-Fetch-Site", "same-origin").header("Accept", "application/json")
                 .header("Content-Length", String.valueOf(searchInfoJson.toString().length()))
-                .header("Content-Type", "application/json; charset=UTF-8")
-                .header("Referer",
+                .header("Content-Type", "application/json; charset=UTF-8").header("Referer",
                         "https://www.safekorea.go.kr/idsiSFK/neo/sfk/cs/sfc/dis/disasterMsgList.jsp?menuSeq=679")
-                .header("X-Requested-With", "XMLHttpRequest")
-                .requestBody(searchInfoJson.toString())
-                .cookies(cookies)
-                .ignoreContentType(true)
-                .method(Connection.Method.POST)
-                .execute();
+                .header("X-Requested-With", "XMLHttpRequest").requestBody(searchInfoJson.toString())
+                .cookies(cookies).ignoreContentType(true).method(Connection.Method.POST).execute();
     }
 
     /**
@@ -150,10 +131,10 @@ public class ScrapingService {
         for (int i = 0; i < disasterSmsList.length(); i++) {
             JSONObject obj = disasterSmsList.getJSONObject(i);
             DisasterAlertDto dto = buildDisasterAlertDto(obj);
+
+            // 중복된 재난의 경우 DB에 저장하지 않는다.
             if (isUniqueAlert(dto)) {
                 repository.save(toEntity(dto));
-            } else {
-                throw new DuplicatedAlertException();
             }
         }
     }
@@ -171,8 +152,39 @@ public class ScrapingService {
         String receivedAreaName = obj.getString("RCV_AREA_NM");
         String content = obj.getString("MSG_CN");
 
-        return new DisasterAlertDto(alertId, disasterName, createdAt,
-                receivedAreaName, content);
+        DisasterCategory disasterCategory = mapDisasterNameToCategory(disasterName);
+
+        return new DisasterAlertDto(alertId, disasterCategory, createdAt, receivedAreaName,
+                content);
+    }
+
+    /**
+     * 인자로 전달된 재난 이름에 해당하는 재난 카테고리를 매핑하는 메서드입니다.
+     *
+     * @param disasterName 재난 이름
+     * @return 재난 카테고리
+     */
+    DisasterCategory mapDisasterNameToCategory(String disasterName) {
+        switch (disasterName) {
+            case "민방공", "비상사태" -> {
+                return DisasterCategory.CIVIL_DEFENCE;
+            }
+            case "산불" -> {
+                return DisasterCategory.WILDFIRE;
+            }
+            case "태풍" -> {
+                return DisasterCategory.TYPHOON;
+            }
+            case "홍수" -> {
+                return DisasterCategory.FLOOD;
+            }
+            case "지진" -> {
+                return DisasterCategory.EARTHQUAKE;
+            }
+            default -> {
+                return DisasterCategory.ETC;
+            }
+        }
     }
 
     /**

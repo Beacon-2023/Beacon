@@ -2,9 +2,9 @@ package com.BEACON.beacon.scraping.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +19,8 @@ public class DisasterAlert {
     @Column(name = "DISASTER_ID")
     private Long id;
 
-    private String disasterName;
+    @Enumerated(EnumType.STRING)
+    private DisasterCategory disasterCategory;
 
     private String createdAt;
 
@@ -27,10 +28,10 @@ public class DisasterAlert {
 
     private String content;
 
-    public DisasterAlert(Long id, String disasterName, String createdAt, String receivedAreaName,
-            String content) {
+    public DisasterAlert(Long id, DisasterCategory disasterCategory, String createdAt,
+            String receivedAreaName, String content) {
         this.id = id;
-        this.disasterName = disasterName;
+        this.disasterCategory = disasterCategory;
         this.createdAt = createdAt;
         this.receivedAreaName = receivedAreaName;
         this.content = content;
