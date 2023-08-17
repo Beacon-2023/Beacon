@@ -1,10 +1,12 @@
 package com.BEACON.beacon.scraping.service;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.BEACON.beacon.scraping.domain.DisasterCategory;
 import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
-import com.BEACON.beacon.scraping.exception.DuplicatedAlertException;
 import com.BEACON.beacon.scraping.repository.ScrapingRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,19 +32,19 @@ public class ScrapingServiceTest {
 
     @BeforeEach
     public void setUp() {
-        dto = new DisasterAlertDto(123L, "DisasterName", "2022-01-01",
+        dto = new DisasterAlertDto(123L, DisasterCategory.EARTHQUAKE, "2022-01-01",
                 "Seoul", "Disaster alert contents");
     }
 
     @Test
-    @DisplayName("중복된 알림의 경우, ")
-    public void whenSavingDuplicateDisasterAlert_thenThrowsUnsupportedOperationException() {
+    @DisplayName("중복된 알림의 경우, DB에 저장되지 않는다")
+    public void testSaveDisasterInfo_DuplicateNotification_NotSavedToDB() {
         when(repository.existsById(dto.getId())).thenReturn(true);
 
         // Prepare the object
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("MD101_SN", dto.getId());
-        jsonObject.put("DSSTR_SE_NM", dto.getDisasterName());
+        jsonObject.put("DSSTR_SE_NM", dto.getDisasterCategory().toString());
         jsonObject.put("CREAT_DT", dto.getCreatedAt());
         jsonObject.put("RCV_AREA_NM", dto.getReceivedAreaName());
         jsonObject.put("MSG_CN", dto.getContent());
@@ -50,9 +52,8 @@ public class ScrapingServiceTest {
         JSONArray jsonArray = new JSONArray();
         jsonArray.put(jsonObject);
 
-        // Test the saveDisasterInfo method
-        assertThrows(
-                DuplicatedAlertException.class,
-                () -> scrapeService.saveDisasterInfo(jsonArray));
+        scrapeService.saveDisasterInfo(jsonArray);
+        verify(repository, never()).save(any());
     }
+
 }
