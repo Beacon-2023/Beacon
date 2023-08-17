@@ -34,4 +34,4 @@ out/
 .vscode/
 
 ### application profile ###
-application-aws.properties
+application.yml

@@ -1,4 +1,10 @@
 spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://beacon-rds.c7s5bgs9dwip.ap-northeast-2.rds.amazonaws.com:3306/beacon
+    username: admin
+    password: beaconrds
+
   jpa:
     hibernate:
       ddl-auto: create
