@@ -8,7 +8,7 @@ public class DisasterAlertMapper {
     public static DisasterAlert toEntity(DisasterAlertDto dto) {
         return DisasterAlert.builder()
                 .id(dto.getId())
-                .disasterName(dto.getDisasterName())
+                .disasterCategory(dto.getDisasterCategory())
                 .createdAt(dto.getCreatedAt())
                 .receivedAreaName(dto.getReceivedAreaName())
                 .content(dto.getContent())
@@ -18,7 +18,7 @@ public class DisasterAlertMapper {
     public static DisasterAlertDto toDto(DisasterAlert disasterAlert) {
         return DisasterAlertDto.builder()
                 .id(disasterAlert.getId())
-                .disasterName(disasterAlert.getDisasterName())
+                .disasterCategory(disasterAlert.getDisasterCategory())
                 .createdAt(disasterAlert.getCreatedAt())
                 .receivedAreaName(disasterAlert.getReceivedAreaName())
                 .content(disasterAlert.getContent())
