@@ -39,10 +39,8 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.2.0'
 
-
 	//spring-session-jdbc
 	implementation group: 'org.springframework.session', name: 'spring-session-jdbc', version: '3.0.1'
-
 
 	// jsoup
 	implementation 'org.jsoup:jsoup:1.16.1'
@@ -54,6 +52,8 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'com.h2database:h2'
 
+	// mysql
+	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 }
 
 tasks.named('test') {
