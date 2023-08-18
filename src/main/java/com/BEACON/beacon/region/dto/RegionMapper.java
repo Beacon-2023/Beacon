@@ -12,6 +12,7 @@ public class RegionMapper {
                 .sido(dto.getSido())
                 .sigungu(dto.getSigungu())
                 .dong(dto.getDong())
+                .legalDongCode(dto.getLegalDongCode())
                 .build();
     }
 
@@ -21,6 +22,7 @@ public class RegionMapper {
                 .sido(region.getSido())
                 .sigungu(region.getSigungu())
                 .dong(region.getDong())
+                .legalDongCode(region.getLegalDongCode())
                 .build();
     }
 

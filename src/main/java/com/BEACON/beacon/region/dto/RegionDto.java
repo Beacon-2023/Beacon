@@ -17,10 +17,13 @@ public class RegionDto {
 
     private String dong;
 
-    public RegionDto(Integer code, String sido, String sigungu, String dong) {
+    private String legalDongCode;
+
+    public RegionDto(Integer code, String sido, String sigungu, String dong, String legalDongCode) {
         this.code = code;
         this.sido = sido;
         this.sigungu = sigungu;
         this.dong = dong;
+        this.legalDongCode = legalDongCode;
     }
 }
