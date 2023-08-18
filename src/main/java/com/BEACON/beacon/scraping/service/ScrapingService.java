@@ -2,12 +2,20 @@ package com.BEACON.beacon.scraping.service;
 
 import static com.BEACON.beacon.scraping.dto.DisasterAlertMapper.toEntity;
 
+import com.BEACON.beacon.region.domain.RegionAlert;
+import com.BEACON.beacon.region.dto.RegionAlertDto;
+import com.BEACON.beacon.region.dto.RegionDto;
+import com.BEACON.beacon.region.dto.RegionMapper;
+import com.BEACON.beacon.region.service.RegionAlertService;
+import com.BEACON.beacon.region.service.RegionService;
 import com.BEACON.beacon.scraping.domain.DisasterCategory;
 import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
 import com.BEACON.beacon.scraping.repository.ScrapingRepository;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
@@ -29,10 +37,16 @@ public class ScrapingService {
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
             + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36";
 
+    private final RegionService regionService;
+
+    private final RegionAlertService regionAlertService;
+
     private final ScrapingRepository repository;
 
     /**
-     * 홈페이지에서 재난 정보를 스크래핑 10초에 한 번씩 실행되도록 스케쥴링되어 있습니다.
+     * 소스로부터 재난 정보를 10초마다 한 번씩 스크래핑합니다.
+     *
+     * @throws IOException 데이터를 읽거나 쓰는 도중 오류가 발생하면 IOException이 발생합니다.
      */
     @Scheduled(fixedRate = 10000)
     @Transactional
@@ -49,9 +63,9 @@ public class ScrapingService {
     }
 
     /**
-     * 홈페이지로부터 쿠키 받아오기
+     * 메인 홈페이지로부터 쿠키를 받아옵니다.
      *
-     * @return 쿠키
+     * @return 받아온 쿠키
      */
     Map<String, String> getSafeKoreaCookies() throws IOException {
         return Jsoup.connect(SAFEKOREA_HOME_URL).userAgent(USER_AGENT).timeout(1000)
@@ -65,7 +79,7 @@ public class ScrapingService {
     }
 
     /**
-     * SearchInfo 를 위한 JSON payload 생성
+     * SearchInfo 를 위한 JSON payload를 생성합니다.
      *
      * @return 생성된 JSON payload
      */
@@ -98,10 +112,10 @@ public class ScrapingService {
     }
 
     /**
-     * cookies 와 payload 를 인자로 받아서 홈페이지에 request 전송
+     * cookies 와 payload 를 인자로 받아서 홈페이지에 request를 전송합니다.
      *
-     * @param cookies        request 와 함께 보내져야 하는 쿠키
-     * @param searchInfoJson JSON payload
+     * @param cookies          request 와 함께 보내져야 하는 쿠키
+     * @param searchInfoJson   JSON payload
      * @return 서버로부터 받은 response
      */
     Connection.Response sendDisasterRequest(Map<String, String> cookies, JSONObject searchInfoJson)
@@ -140,22 +154,55 @@ public class ScrapingService {
     }
 
     /**
-     * 주어진 JSONObject에서 DisasterAlertDto 객체를 구성합니다.
+     * 제공된 JSONObject를 사용하여 DisasterAlertDto 객체를 구성합니다.
      *
-     * @param obj 재난 정보를 포함한 JSONObject
-     * @return 재난 정보를 나타내는 DisasterAlertDto 객체
+     * @param obj DisasterAlertDto를 구성하기 위한 데이터를 포함하는 JSONObject.
+     * @return 제공된 JSONObject로 구성된 DisasterAlertDto 객체를 반환합니다.
      */
     DisasterAlertDto buildDisasterAlertDto(JSONObject obj) {
         long alertId = obj.getLong("MD101_SN");
-        String disasterName = obj.getString("DSSTR_SE_NM");
-        String createdAt = obj.getString("CREAT_DT");
-        String receivedAreaName = obj.getString("RCV_AREA_NM");
-        String content = obj.getString("MSG_CN");
 
+        String disasterName = obj.getString("DSSTR_SE_NM");
         DisasterCategory disasterCategory = mapDisasterNameToCategory(disasterName);
 
-        return new DisasterAlertDto(alertId, disasterCategory, createdAt, receivedAreaName,
-                content);
+        String createdAt = obj.getString("CREAT_DT");
+        String content = obj.getString("MSG_CN");
+        List<RegionAlertDto> regionAlertDtoList
+            = buildRegionAlertDtoList(obj.getString("RCV_AREA_ID"));
+
+        return new DisasterAlertDto(alertId, disasterCategory, createdAt, content,
+                regionAlertDtoList);
+    }
+
+    /**
+     * 지역 알림 DTO List를 구성합니다.
+     *
+     * @param receivedRegionCode 수신된 지역 코드 문자열입니다.
+     * @return 구성된 지역 알림 DTO 목록을 반환합니다.
+     */
+    private List<RegionAlertDto> buildRegionAlertDtoList(String receivedRegionCode) {
+        List<RegionAlertDto> regionAlertDtoList = new ArrayList<>();
+        String[] regionCodes = receivedRegionCode.split(",");
+        for (String regionCode : regionCodes) {
+            regionAlertDtoList.add(buildRegionAlertDto(Integer.parseInt(regionCode)));
+        }
+
+        return regionAlertDtoList;
+    }
+
+    /**
+     * 지역 알림 DTO를 구성합니다.
+     *
+     * @param regionCode 지역 코드입니다.
+     * @return 구성된 지역 알림 DTO를 반환합니다.
+     */
+    private RegionAlertDto buildRegionAlertDto(Integer regionCode) {
+        RegionDto regionDto = regionService.findRegionByCode(regionCode);
+        RegionAlert regionAlert = new RegionAlert();
+        regionAlert.setRegion(regionDto);
+        regionAlertService.saveRegionAlert(RegionMapper.toDto(regionAlert));
+
+        return RegionMapper.toDto(regionAlert);
     }
 
     /**
@@ -190,7 +237,8 @@ public class ScrapingService {
     /**
      * 인자로 들어온 DisasterAlertDto가 DB에 이미 저장되어 있는지 여부를 체크합니다.
      *
-     * @return true : DB에 이미 값이 존재함 / false : 새로운 재난문자
+     * @return true : DB에 이미 값이 존재함
+     *         false : 새로운 재난문자
      */
     boolean isUniqueAlert(DisasterAlertDto dto) {
         return !repository.existsById(dto.getId());

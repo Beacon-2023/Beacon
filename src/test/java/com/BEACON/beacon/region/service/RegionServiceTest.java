@@ -30,7 +30,7 @@ class RegionServiceTest {
     @DisplayName("DB에 존재하는 지역 코드일 경우 RegionDto 반환")
     void findRegionByCode() {
         // given
-        String testCode = "1234";
+        Integer testCode = 1234;
         Region expectedRegion = new Region();
         when(regionRepository.findRegionByCode(testCode)).thenReturn(Optional.of(expectedRegion));
 
@@ -46,7 +46,7 @@ class RegionServiceTest {
     @DisplayName("DB에 존재하지 않는 지역 코드일 경우 NoSuchRegionException 반환")
     void findRegionByCode_notExistRegion() {
         // given
-        String testCode = "1234";
+        Integer testCode = 1234;
         when(regionRepository.findRegionByCode(testCode)).thenReturn(Optional.empty());
 
         // when, then
