@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegionDto {
 
-    private String code;
+    private Integer code;
 
     private String sido;
 
@@ -17,7 +17,7 @@ public class RegionDto {
 
     private String dong;
 
-    public RegionDto(String code, String sido, String sigungu, String dong) {
+    public RegionDto(Integer code, String sido, String sigungu, String dong) {
         this.code = code;
         this.sido = sido;
         this.sigungu = sigungu;

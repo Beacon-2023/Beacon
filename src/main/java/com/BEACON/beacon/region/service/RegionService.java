@@ -16,7 +16,7 @@ public class RegionService {
 
     private final RegionRepository repository;
 
-    public RegionDto findRegionByCode(String code) {
+    public RegionDto findRegionByCode(Integer code) {
         Region region = repository.findRegionByCode(code).orElseThrow(
                 () -> new NoSuchRegionException("코드에 맞는 지역이 존재하지 않습니다.")
         );

@@ -15,7 +15,7 @@ public class Region {
 
     @Id
     @Column(name = "REGION_CODE")
-    private String code;
+    private Integer code;
 
     private String sido;
 
@@ -23,7 +23,7 @@ public class Region {
 
     private String dong;
 
-    public Region(String code, String sido, String sigungu, String dong) {
+    public Region(Integer code, String sido, String sigungu, String dong) {
         this.code = code;
         this.sido = sido;
         this.sigungu = sigungu;
