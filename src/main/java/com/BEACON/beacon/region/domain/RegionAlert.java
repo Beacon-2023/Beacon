@@ -1,6 +1,10 @@
 package com.BEACON.beacon.region.domain;
 
+import com.BEACON.beacon.region.dto.RegionDto;
+import com.BEACON.beacon.region.dto.RegionMapper;
 import com.BEACON.beacon.scraping.domain.DisasterAlert;
+import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
+import com.BEACON.beacon.scraping.dto.DisasterAlertMapper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +21,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegionAlert {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "REGION_ALERT_ID")
     private Long id;
 
@@ -33,5 +38,21 @@ public class RegionAlert {
         this.id = id;
         this.region = region;
         this.disasterAlert = disasterAlert;
+    }
+
+    public void setRegion(RegionDto dto) {
+        this.region = RegionMapper.toEntity(dto);
+    }
+
+    public void setDisasterAlert(DisasterAlertDto dto) {
+        if (this.disasterAlert != null) {
+            this.disasterAlert.getRegionAlertList().remove(this);
+        }
+
+        DisasterAlert entity = DisasterAlertMapper.toEntity(dto);
+        this.disasterAlert = entity;
+        if (!entity.getRegionAlertList().contains(this)) {
+            entity.getRegionAlertList().add(this);
+        }
     }
 }
