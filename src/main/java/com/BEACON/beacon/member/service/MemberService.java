@@ -63,7 +63,7 @@ public class MemberService {
      * @param userId
      * @return MemberEntity or Exception
      */
-    protected MemberEntity findMemberByUserId(String userId){
+    public MemberEntity findMemberByUserId(String userId){
         return memberRepository.findMemberByUserId(userId).orElseThrow(()->new MemberNotFoundException("가입된 회원이 아닙니다"));
     }
 
