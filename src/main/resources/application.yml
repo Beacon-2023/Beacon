@@ -11,7 +11,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -19,7 +19,6 @@ spring:
   session:
     jdbc:
       initialize-schema: always
-
 
 logging.level:
   org.hibernate.SQL: debug
@@ -30,4 +29,3 @@ springdoc:
     path: /swagger
   api-docs:
     path: /api-docs/json
-
