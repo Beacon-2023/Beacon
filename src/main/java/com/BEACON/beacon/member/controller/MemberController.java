@@ -34,7 +34,7 @@ public class MemberController {
     public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid MemberDto memberDto) {
 
         //고객이 등록한 아이디 중복 체크
-        boolean isDuplicatedId = memberService.isDuplicatedId(memberDto.getUserId());
+        boolean isDuplicatedId = memberService.isDuplicatedId(memberDto.getUserName());
         if(isDuplicatedId){
             return RESPONSE_FORBIDDEN;
         }
@@ -74,7 +74,7 @@ public class MemberController {
         boolean isValidMember = memberService.isValidMember(memberDto,passwordEncoder);
 
         if(isValidMember){
-            sessionLoginService.login(memberDto.getUserId(),request);
+            sessionLoginService.login(memberDto.getUserName(),request);
             return RESPONSE_OK;
         }
         return RESPONSE_BAD_REQUEST;

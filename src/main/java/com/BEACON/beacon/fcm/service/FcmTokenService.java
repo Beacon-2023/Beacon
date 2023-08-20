@@ -20,8 +20,8 @@ public class FcmTokenService {
         MemberEntity member;
         FcmTokenEntity fcmTokenEntity;
 
-        if(fcmTokenDto.getUsername()!=null){
-          member =  memberService.findMemberByUserId(fcmTokenDto.getUsername());
+        if(fcmTokenDto.getUserName()!=null){
+          member =  memberService.findMemberByUserName(fcmTokenDto.getUserName());
           fcmTokenEntity =  fcmTokenMapper.toMemberEntity(fcmTokenDto,member);
         }else{
            fcmTokenEntity =  fcmTokenMapper.toNoNMemberEntity(fcmTokenDto);

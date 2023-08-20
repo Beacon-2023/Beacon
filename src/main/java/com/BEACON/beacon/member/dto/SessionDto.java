@@ -8,5 +8,5 @@ import java.io.Serializable;
 @Getter
 @Builder
 public class SessionDto implements Serializable {
-    private String userId;
+    private String userName;
 }

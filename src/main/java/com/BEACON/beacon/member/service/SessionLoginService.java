@@ -13,11 +13,11 @@ public class SessionLoginService {
     private final MemberService memberService;
     public static final String LOGIN_MEMBER = "loginMember";
 
-    public void login(String userId, HttpServletRequest request){
-        MemberEntity member = memberService.findMemberByUserId(userId);
+    public void login(String userName, HttpServletRequest request){
+        MemberEntity member = memberService.findMemberByUserName(userName);
 
         SessionDto sessionDto = SessionDto.builder()
-                .userId(member.getUserId())
+                .userName(member.getUserName())
                 .build();
 
         HttpSession session = request.getSession();

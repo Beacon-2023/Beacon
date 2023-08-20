@@ -25,11 +25,11 @@ public class MemberService {
     /**
      * 회원가입시 아이디 중복 체크를 진행한다.
      *
-     * @param userId 중복체크를 진행할 아이디
+     * @param userName 중복체크를 진행할 아이디
      * @return true: 중복된 아이디 false : 중복되지 않은 아이디(생성 가능한 아이디)
      */
-    public boolean isDuplicatedId(String userId){
-        return memberRepository.existsByUserId(userId);
+    public boolean isDuplicatedId(String userName){
+        return memberRepository.existsByUserName(userName);
     }
 
     /**
@@ -49,7 +49,7 @@ public class MemberService {
      * @return 아이디와 비밀번호가 일치하면 true 아니면 false 반환
      */
     public boolean isValidMember(MemberLoginRequestDto memberDto, PasswordEncoder passwordEncoder){
-        MemberEntity member = findMemberByUserId(memberDto.getUserId());
+        MemberEntity member = findMemberByUserName(memberDto.getUserName());
 
         if(passwordEncoder.matches(memberDto.getPassword(),member.getPassword())){
             return true;
@@ -60,11 +60,11 @@ public class MemberService {
 
     /**
      * 사용자가 입력한 아이디가 존재하는 지 검사
-     * @param userId
+     * @param userName
      * @return MemberEntity or Exception
      */
-    public MemberEntity findMemberByUserId(String userId){
-        return memberRepository.findMemberByUserId(userId).orElseThrow(()->new MemberNotFoundException("가입된 회원이 아닙니다"));
+    public MemberEntity findMemberByUserName(String userName){
+        return memberRepository.findMemberByUserName(userName).orElseThrow(()->new MemberNotFoundException("가입된 회원이 아닙니다"));
     }
 
 

@@ -9,7 +9,7 @@ public class FcmTokenDto {
     @NotEmpty
     private String token;
 
-    private String username;
+    private String userName;
 
 
 
