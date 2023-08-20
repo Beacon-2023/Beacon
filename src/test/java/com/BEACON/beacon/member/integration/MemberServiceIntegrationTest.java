@@ -3,6 +3,7 @@ package com.BEACON.beacon.member.integration;
 import com.BEACON.beacon.member.dao.MemberRepository;
 import com.BEACON.beacon.member.domain.MemberEntity;
 import com.BEACON.beacon.member.dto.MemberDto;
+import com.BEACON.beacon.member.mapper.MemberMapper;
 import com.BEACON.beacon.member.service.MemberService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,9 @@ public class MemberServiceIntegrationTest {
     private MemberRepository memberRepository;
 
     @Autowired
+    private MemberMapper memberMapper;
+
+    @Autowired
     private MemberService memberService;
 
     @Autowired
@@ -38,12 +42,12 @@ public class MemberServiceIntegrationTest {
     @BeforeEach
     void setup(){
         memberDto = MemberDto.builder()
-                .userId("beacon1234")
+                .userName("beacon1234")
                 .email("beacon@admin.com")
                 .password("1q2w3e4r!")
                 .build();
 
-        memberEntity = MemberDto.toEntity(memberDto,passwordEncoder);
+        memberEntity = memberMapper.toEntity(memberDto,passwordEncoder);
     }
 
     @Test
@@ -52,7 +56,7 @@ public class MemberServiceIntegrationTest {
     @Rollback(false)
     public void saveMember(){
         //when
-        Long saveId = memberService.registrationMember(memberEntity);
+        Long saveId = memberService.registrationMember(memberDto);
 
         //then
         Optional<MemberEntity> findMemberOptional = memberRepository.findById(saveId);
@@ -61,7 +65,7 @@ public class MemberServiceIntegrationTest {
 
         MemberEntity findMember = findMemberOptional.get();
 
-        assertEquals("beacon1234",findMember.getUserId());
+        assertEquals("beacon1234",findMember.getUserName());
         assertEquals("beacon@admin.com",findMember.getEmail());
 
 

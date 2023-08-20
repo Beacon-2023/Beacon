@@ -36,13 +36,6 @@ public class MemberDto {
         this.password = password;
     }
 
-    public static MemberEntity toEntity(MemberDto memberDto, PasswordEncoder passwordEncoder) {
-        return MemberEntity.builder()
-                .userName(memberDto.getUserName())
-                .email(memberDto.getEmail())
-                .status(MemberStatus.ACTIVE)
-                .password(passwordEncoder.encode(memberDto.getPassword()))
-                .build();
-    }
+
 
 }

@@ -3,6 +3,7 @@ package com.BEACON.beacon.member.service;
 import com.BEACON.beacon.member.dao.MemberRepository;
 import com.BEACON.beacon.member.domain.MemberEntity;
 import com.BEACON.beacon.member.dto.MemberDto;
+import com.BEACON.beacon.member.mapper.MemberMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ class MemberServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
+    private MemberMapper memberMapper;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     private MemberDto memberDto;
@@ -36,29 +40,29 @@ class MemberServiceTest {
     void setup(){
         when(passwordEncoder.encode(any())).thenReturn("1q2w3e4r!");
         memberDto = MemberDto.builder()
-                .userId("beacon1234")
+                .userName("beacon1234")
                 .email("beacon@admin.com")
                 .password("1q2w3e4r!")
                 .build();
 
-        memberEntity = MemberDto.toEntity(memberDto,passwordEncoder);
+        memberEntity = memberMapper.toEntity(memberDto,passwordEncoder);
     }
 
     @Test
     @DisplayName("중복된 회원아이디가 존재하지 않은 경우 FALSE를 반환한다.")
     void isNotDuplicatedMemberId(){
-        when(memberRepository.existsByUserId(any())).thenReturn(false);
+        when(memberRepository.existsByUserName(any())).thenReturn(false);
 
-        assertFalse(memberService.isDuplicatedId(memberEntity.getUserId()));
+        assertFalse(memberService.isDuplicatedId(memberEntity.getUserName()));
     }
 
 
     @Test
     @DisplayName("중복된 회원아이디가 존재하는 경우 TRUE를 반환한다.")
     void isDuplicatedMemberId(){
-        when(memberRepository.existsByUserId(any())).thenReturn(true);
+        when(memberRepository.existsByUserName(any())).thenReturn(true);
 
-        assertTrue(memberService.isDuplicatedId(memberEntity.getUserId()));
+        assertTrue(memberService.isDuplicatedId(memberEntity.getUserName()));
     }
 
     @Test

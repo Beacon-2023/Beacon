@@ -1,7 +1,9 @@
 package com.BEACON.beacon.member.controller;
 
+import com.BEACON.beacon.member.dao.MemberRepository;
 import com.BEACON.beacon.member.domain.MemberEntity;
 import com.BEACON.beacon.member.dto.MemberDto;
+import com.BEACON.beacon.member.mapper.MemberMapper;
 import com.BEACON.beacon.member.service.MemberService;
 import com.BEACON.beacon.member.service.SessionLoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,6 +41,9 @@ class MemberControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
+    private MemberMapper memberMapper;
+
+    @MockBean
     private MemberService memberService;
 
     @MockBean
@@ -53,7 +58,8 @@ class MemberControllerTest {
     @BeforeEach
     void setup(WebApplicationContext applicationContext){
         memberDto = new MemberDto("beacon1234","beacon@naver.com","1Q2w3e4r!@");
-        memberEntity = MemberDto.toEntity(memberDto,passwordEncoder);
+        memberEntity = memberMapper.toEntity(memberDto,passwordEncoder);
+
         objectMapper = new ObjectMapper();
 
         mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext)

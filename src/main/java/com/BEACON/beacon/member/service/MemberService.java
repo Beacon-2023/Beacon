@@ -3,21 +3,26 @@ package com.BEACON.beacon.member.service;
 import com.BEACON.beacon.global.error.exception.MemberNotFoundException;
 import com.BEACON.beacon.member.dao.MemberRepository;
 import com.BEACON.beacon.member.domain.MemberEntity;
+import com.BEACON.beacon.member.dto.MemberDto;
+import com.BEACON.beacon.member.mapper.MemberMapper;
 import com.BEACON.beacon.member.request.MemberLoginRequestDto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-
+    private final MemberMapper memberMapper;
+    private final PasswordEncoder passwordEncoder;
     @Transactional
-    public Long registrationMember(MemberEntity memberEntity){
+    public Long registrationMember(MemberDto memberDto){
 
-       MemberEntity member =  memberRepository.save(memberEntity);
+        MemberEntity memberEntity = memberMapper.toEntity(memberDto,passwordEncoder);
+
+        MemberEntity member =  memberRepository.save(memberEntity);
 
        return member.getId();
     }
@@ -45,10 +50,9 @@ public class MemberService {
     /**
      * 사용자가 입력한 비밀번호가 유효한지 검사
      * @param memberDto
-     * @param passwordEncoder
      * @return 아이디와 비밀번호가 일치하면 true 아니면 false 반환
      */
-    public boolean isValidMember(MemberLoginRequestDto memberDto, PasswordEncoder passwordEncoder){
+    public boolean isValidMember(MemberLoginRequestDto memberDto){
         MemberEntity member = findMemberByUserName(memberDto.getUserName());
 
         if(passwordEncoder.matches(memberDto.getPassword(),member.getPassword())){

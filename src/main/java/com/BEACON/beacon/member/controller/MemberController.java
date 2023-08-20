@@ -1,7 +1,6 @@
 package com.BEACON.beacon.member.controller;
 
 import com.BEACON.beacon.global.annotation.LoginRequired;
-import com.BEACON.beacon.member.domain.MemberEntity;
 import com.BEACON.beacon.member.dto.MemberDto;
 import com.BEACON.beacon.member.request.MemberLoginRequestDto;
 import com.BEACON.beacon.member.service.MemberService;
@@ -39,8 +38,7 @@ public class MemberController {
             return RESPONSE_FORBIDDEN;
         }
 
-        MemberEntity memberEntity = MemberDto.toEntity(memberDto,passwordEncoder);
-        memberService.registrationMember(memberEntity);
+        memberService.registrationMember(memberDto);
 
         return RESPONSE_CREATED;
     }
@@ -71,7 +69,7 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody @Valid MemberLoginRequestDto memberDto, HttpServletRequest request){
 
-        boolean isValidMember = memberService.isValidMember(memberDto,passwordEncoder);
+        boolean isValidMember = memberService.isValidMember(memberDto);
 
         if(isValidMember){
             sessionLoginService.login(memberDto.getUserName(),request);
