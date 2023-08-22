@@ -1,7 +1,6 @@
 package com.BEACON.beacon.member.controller;
 
 import com.BEACON.beacon.global.annotation.LoginRequired;
-import com.BEACON.beacon.member.domain.MemberEntity;
 import com.BEACON.beacon.member.dto.MemberDto;
 import com.BEACON.beacon.member.request.MemberLoginRequestDto;
 import com.BEACON.beacon.member.service.MemberService;
@@ -34,13 +33,12 @@ public class MemberController {
     public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid MemberDto memberDto) {
 
         //고객이 등록한 아이디 중복 체크
-        boolean isDuplicatedId = memberService.isDuplicatedId(memberDto.getUserId());
+        boolean isDuplicatedId = memberService.isDuplicatedId(memberDto.getUserName());
         if(isDuplicatedId){
             return RESPONSE_FORBIDDEN;
         }
 
-        MemberEntity memberEntity = MemberDto.toEntity(memberDto,passwordEncoder);
-        memberService.registrationMember(memberEntity);
+        memberService.registrationMember(memberDto);
 
         return RESPONSE_CREATED;
     }
@@ -71,10 +69,10 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody @Valid MemberLoginRequestDto memberDto, HttpServletRequest request){
 
-        boolean isValidMember = memberService.isValidMember(memberDto,passwordEncoder);
+        boolean isValidMember = memberService.isValidMember(memberDto);
 
         if(isValidMember){
-            sessionLoginService.login(memberDto.getUserId(),request);
+            sessionLoginService.login(memberDto.getUserName(),request);
             return RESPONSE_OK;
         }
         return RESPONSE_BAD_REQUEST;

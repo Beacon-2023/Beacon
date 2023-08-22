@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Getter
 public class MemberLoginRequestDto {
     @NotEmpty
-    private String userId;
+    private String userName;
     @NotEmpty
     private String password;
 }
