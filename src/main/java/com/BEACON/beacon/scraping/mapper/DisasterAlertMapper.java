@@ -1,11 +1,11 @@
-package com.BEACON.beacon.scraping.dto;
+package com.BEACON.beacon.scraping.mapper;
 
 import com.BEACON.beacon.region.domain.RegionAlert;
 import com.BEACON.beacon.region.dto.RegionAlertDto;
-import com.BEACON.beacon.region.dto.RegionMapper;
+import com.BEACON.beacon.region.mapper.RegionMapper;
 import com.BEACON.beacon.scraping.domain.DisasterAlert;
+import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component

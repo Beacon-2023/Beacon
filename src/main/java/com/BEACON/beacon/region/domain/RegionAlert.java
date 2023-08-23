@@ -1,10 +1,10 @@
 package com.BEACON.beacon.region.domain;
 
 import com.BEACON.beacon.region.dto.RegionDto;
-import com.BEACON.beacon.region.dto.RegionMapper;
+import com.BEACON.beacon.region.mapper.RegionMapper;
 import com.BEACON.beacon.scraping.domain.DisasterAlert;
 import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
-import com.BEACON.beacon.scraping.dto.DisasterAlertMapper;
+import com.BEACON.beacon.scraping.mapper.DisasterAlertMapper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

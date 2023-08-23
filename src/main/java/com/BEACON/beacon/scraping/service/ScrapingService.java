@@ -1,11 +1,11 @@
 package com.BEACON.beacon.scraping.service;
 
-import static com.BEACON.beacon.scraping.dto.DisasterAlertMapper.toEntity;
+import static com.BEACON.beacon.scraping.mapper.DisasterAlertMapper.toEntity;
 
 import com.BEACON.beacon.region.domain.RegionAlert;
 import com.BEACON.beacon.region.dto.RegionAlertDto;
 import com.BEACON.beacon.region.dto.RegionDto;
-import com.BEACON.beacon.region.dto.RegionMapper;
+import com.BEACON.beacon.region.mapper.RegionMapper;
 import com.BEACON.beacon.region.service.RegionAlertService;
 import com.BEACON.beacon.region.service.RegionService;
 import com.BEACON.beacon.scraping.domain.DisasterCategory;

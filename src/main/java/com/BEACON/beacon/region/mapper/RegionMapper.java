@@ -1,7 +1,9 @@
-package com.BEACON.beacon.region.dto;
+package com.BEACON.beacon.region.mapper;
 
 import com.BEACON.beacon.region.domain.Region;
 import com.BEACON.beacon.region.domain.RegionAlert;
+import com.BEACON.beacon.region.dto.RegionAlertDto;
+import com.BEACON.beacon.region.dto.RegionDto;
 import org.springframework.stereotype.Component;
 
 @Component

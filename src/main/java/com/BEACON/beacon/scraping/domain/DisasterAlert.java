@@ -2,8 +2,8 @@ package com.BEACON.beacon.scraping.domain;
 
 import com.BEACON.beacon.region.domain.RegionAlert;
 import com.BEACON.beacon.region.dto.RegionAlertDto;
-import com.BEACON.beacon.region.dto.RegionMapper;
-import com.BEACON.beacon.scraping.dto.DisasterAlertMapper;
+import com.BEACON.beacon.region.mapper.RegionMapper;
+import com.BEACON.beacon.scraping.mapper.DisasterAlertMapper;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
