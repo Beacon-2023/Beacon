@@ -60,6 +60,9 @@ dependencies {
 	// okhttp
 	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0'
 
+	// gson
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+
 }
 
 tasks.named('test') {
