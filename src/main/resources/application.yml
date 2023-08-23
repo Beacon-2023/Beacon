@@ -1,31 +1,3 @@
 spring:
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-  datasource:
-    url: jdbc:h2:tcp://localhost/~/beacon
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-  session:
-    jdbc:
-      initialize-schema: always
-
-logging.level:
-  org.hibernate.SQL: debug
-
-# swagger-ui path
-springdoc:
-  swagger-ui:
-    path: /swagger
-  api-docs:
-    path: /api-docs/json
+  profiles:
+    active: dev
