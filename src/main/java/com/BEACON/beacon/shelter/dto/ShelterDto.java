@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class ShelterDto {
+
     private Long id;
 
     private ShelterCategory shelterCategory;

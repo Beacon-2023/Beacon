@@ -33,7 +33,7 @@ public class Shelter {
 
     private String tel;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "REGION_CODE")
     private Region region;
 
