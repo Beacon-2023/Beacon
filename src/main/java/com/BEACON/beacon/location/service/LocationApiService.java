@@ -111,10 +111,9 @@ public class LocationApiService {
     }
 
 
-    public void findFcmToken(List<String> legalDongList) {
-        List<RegionTokenEntity> fcmTokenList = regionTokenRepository.findByLegalDongCodeIn(legalDongList);
-
-
+    public List<String> findFcmTokenByLegalDongList(List<String> legalDongList) {
+      return  regionTokenRepository.findByLegalDongCodeIn(legalDongList)
+                .stream().map(RegionTokenEntity::getFcmToken).collect(Collectors.toList());
     }
 
 

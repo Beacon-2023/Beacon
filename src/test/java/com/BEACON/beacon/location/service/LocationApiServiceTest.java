@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 @SpringBootTest
@@ -66,6 +69,34 @@ class LocationApiServiceTest {
 
         assertEquals("법정동코드 교체가 안됨","1235322245",entity.getLegalDongCode());
 
+    }
+
+    @Test
+    void 법정동코드로FCM토큰들반환(){
+        locationApiService.storeRegionAndFcmToken("abcdef","4113510900");
+        locationApiService.storeRegionAndFcmToken("123456","4113510900");
+        locationApiService.storeRegionAndFcmToken("1w2q3e4r","411312345");
+        locationApiService.storeRegionAndFcmToken("ab123ef","333333333");
+        locationApiService.storeRegionAndFcmToken("ab411f","4113510900");
+
+        //같은 legalDongCode에 속하는 fcm토큰들 반환
+        List<String> fcmTokenList = locationApiService.findFcmTokenByLegalDongList(Arrays.asList("4113510900","411312345"));
+
+
+
+        for (String token : fcmTokenList) {
+            assertThat(token).isIn("abcdef", "ab411f", "123456", "1w2q3e4r");
+        }
+        assertThat(fcmTokenList).isNotIn("ab123ef");
+
+
+
+    }
+
+    @Test
+    void 존재하지않은법정동코드일때(){
+       List<String> fcmTokenList =  locationApiService.findFcmTokenByLegalDongList(Arrays.asList("1234"));
+        System.out.println("fcmTokenList = " + fcmTokenList);
     }
 
 }
