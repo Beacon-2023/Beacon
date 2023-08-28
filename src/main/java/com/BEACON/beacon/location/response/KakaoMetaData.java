@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 
 @Getter
-public class Metadata {
+public class KakaoMetaData {
     @SerializedName("total_count")
     private int totalCount;
 

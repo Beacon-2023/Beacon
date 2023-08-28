@@ -3,8 +3,8 @@ package com.BEACON.beacon.location.service;
 import com.BEACON.beacon.global.error.exception.LegalDongCodeNotFoundException;
 import com.BEACON.beacon.location.dao.RegionTokenRepository;
 import com.BEACON.beacon.location.domain.RegionTokenEntity;
-import com.BEACON.beacon.location.response.ApiResponse;
-import com.BEACON.beacon.location.response.Document;
+import com.BEACON.beacon.location.response.KakaoApiResponse;
+import com.BEACON.beacon.location.response.KakaoDocument;
 import com.google.gson.Gson;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -77,13 +77,13 @@ public class LocationApiService {
         ResponseBody body = response.body();
         if (body != null) {
 
-            ApiResponse apiResponse = gson.fromJson(body.string(), ApiResponse.class);
+            KakaoApiResponse apiResponse = gson.fromJson(body.string(), KakaoApiResponse.class);
 
-            List<Document> documentList = apiResponse.getDocuments();
+            List<KakaoDocument> documentList = apiResponse.getDocuments();
             //법정동 코드 얻기
             String legalDongCode = documentList.stream()
                     .filter((document) -> "B".equals(document.getRegionType()))
-                    .map(Document::getCode)
+                    .map(KakaoDocument::getCode)
                     .collect(Collectors.joining());
 
 

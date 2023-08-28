@@ -5,12 +5,12 @@ import lombok.Getter;
 
 import java.util.List;
 @Getter
-public class ApiResponse {
+public class KakaoApiResponse {
     @SerializedName("meta")
-    private Metadata meta;
+    private KakaoMetaData meta;
 
     @SerializedName("documents")
-    private List<Document> documents;
+    private List<KakaoDocument> documents;
 
     @Override
     public String toString() {

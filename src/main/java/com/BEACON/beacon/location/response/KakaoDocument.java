@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 
 @Getter
-public class Document {
+public class KakaoDocument {
     @SerializedName("region_type")
     private String regionType;
 
