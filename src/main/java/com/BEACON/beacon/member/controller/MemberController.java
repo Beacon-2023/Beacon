@@ -21,7 +21,6 @@ import static com.BEACON.beacon.global.HttpStatusResponse.*;
 public class MemberController {
 
     private final MemberService memberService;
-    private final PasswordEncoder passwordEncoder;
     private final SessionLoginService sessionLoginService;
 
     /**

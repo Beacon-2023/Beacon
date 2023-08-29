@@ -43,3 +43,5 @@ application-prod.yml
 ### Firebase Patch ###
 .runtimeconfig.json
 .firebase/
+
+src/main/resources/application-API-KEY.properties
