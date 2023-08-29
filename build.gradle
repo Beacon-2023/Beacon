@@ -52,6 +52,15 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'com.h2database:h2'
 
+	//firebase
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+	// okhttp
+	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.10.0'
+
+	// gson
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
+
 	// mysql
 	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 }

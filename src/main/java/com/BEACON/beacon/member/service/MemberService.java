@@ -3,21 +3,26 @@ package com.BEACON.beacon.member.service;
 import com.BEACON.beacon.global.error.exception.MemberNotFoundException;
 import com.BEACON.beacon.member.dao.MemberRepository;
 import com.BEACON.beacon.member.domain.MemberEntity;
+import com.BEACON.beacon.member.dto.MemberDto;
+import com.BEACON.beacon.member.mapper.MemberMapper;
 import com.BEACON.beacon.member.request.MemberLoginRequestDto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
-
+    private final MemberMapper memberMapper;
+    private final PasswordEncoder passwordEncoder;
     @Transactional
-    public Long registrationMember(MemberEntity memberEntity){
+    public Long registrationMember(MemberDto memberDto){
 
-       MemberEntity member =  memberRepository.save(memberEntity);
+        MemberEntity memberEntity = memberMapper.toEntity(memberDto,passwordEncoder);
+
+        MemberEntity member =  memberRepository.save(memberEntity);
 
        return member.getId();
     }
@@ -25,11 +30,11 @@ public class MemberService {
     /**
      * 회원가입시 아이디 중복 체크를 진행한다.
      *
-     * @param userId 중복체크를 진행할 아이디
+     * @param userName 중복체크를 진행할 아이디
      * @return true: 중복된 아이디 false : 중복되지 않은 아이디(생성 가능한 아이디)
      */
-    public boolean isDuplicatedId(String userId){
-        return memberRepository.existsByUserId(userId);
+    public boolean isDuplicatedId(String userName){
+        return memberRepository.existsByUserName(userName);
     }
 
     /**
@@ -45,11 +50,10 @@ public class MemberService {
     /**
      * 사용자가 입력한 비밀번호가 유효한지 검사
      * @param memberDto
-     * @param passwordEncoder
      * @return 아이디와 비밀번호가 일치하면 true 아니면 false 반환
      */
-    public boolean isValidMember(MemberLoginRequestDto memberDto, PasswordEncoder passwordEncoder){
-        MemberEntity member = findMemberByUserId(memberDto.getUserId());
+    public boolean isValidMember(MemberLoginRequestDto memberDto){
+        MemberEntity member = findMemberByUserName(memberDto.getUserName());
 
         if(passwordEncoder.matches(memberDto.getPassword(),member.getPassword())){
             return true;
@@ -60,11 +64,11 @@ public class MemberService {
 
     /**
      * 사용자가 입력한 아이디가 존재하는 지 검사
-     * @param userId
+     * @param userName
      * @return MemberEntity or Exception
      */
-    protected MemberEntity findMemberByUserId(String userId){
-        return memberRepository.findMemberByUserId(userId).orElseThrow(()->new MemberNotFoundException("가입된 회원이 아닙니다"));
+    public MemberEntity findMemberByUserName(String userName){
+        return memberRepository.findMemberByUserName(userName).orElseThrow(()->new MemberNotFoundException("가입된 회원이 아닙니다"));
     }
 
 

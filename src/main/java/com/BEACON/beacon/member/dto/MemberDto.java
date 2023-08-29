@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class MemberDto {
 
     @NotEmpty
-    private String userId;
+    private String userName;
 
     @NotEmpty
     @Email(message = "유효하지 않은 이메일 형식입니다.",
@@ -30,19 +30,12 @@ public class MemberDto {
     }
 
     @Builder
-    public MemberDto(String userId, String email, String password) {
-        this.userId = userId;
+    public MemberDto(String userName, String email, String password) {
+        this.userName = userName;
         this.email = email;
         this.password = password;
     }
 
-    public static MemberEntity toEntity(MemberDto memberDto, PasswordEncoder passwordEncoder) {
-        return MemberEntity.builder()
-                .userId(memberDto.getUserId())
-                .email(memberDto.getEmail())
-                .status(MemberStatus.ACTIVE)
-                .password(passwordEncoder.encode(memberDto.getPassword()))
-                .build();
-    }
+
 
 }

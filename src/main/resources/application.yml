@@ -1,27 +1,4 @@
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://beacon-rds.c7s5bgs9dwip.ap-northeast-2.rds.amazonaws.com:3306/beacon
-    username: admin
-    password: beaconrds
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-  session:
-    jdbc:
-      initialize-schema: always
-
-logging.level:
-  org.hibernate.SQL: debug
-
-# swagger-ui path
-springdoc:
-  swagger-ui:
-    path: /swagger
-  api-docs:
-    path: /api-docs/json
+  profiles:
+    include: API-KEY
+    active: dev

@@ -34,4 +34,14 @@ out/
 .vscode/
 
 ### application profile ###
-application.yml
+application-prod.yml
+
+### Firebase ###
+**/node_modules/*
+**/.firebaserc
+
+### Firebase Patch ###
+.runtimeconfig.json
+.firebase/
+
+src/main/resources/application-API-KEY.properties
