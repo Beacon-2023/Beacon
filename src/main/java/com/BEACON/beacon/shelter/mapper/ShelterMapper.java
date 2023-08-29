@@ -13,6 +13,7 @@ public class ShelterMapper {
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
                 .tel(dto.getTel())
+                .detailAddress(dto.getDetailAddress())
                 .region(dto.getRegion())
                 .build();
     }
@@ -25,6 +26,7 @@ public class ShelterMapper {
                 .latitude(shelter.getLatitude())
                 .longitude(shelter.getLongitude())
                 .tel(shelter.getTel())
+                .detailAddress(shelter.getDetailAddress())
                 .region(shelter.getRegion())
                 .build();
     }
@@ -35,6 +37,7 @@ public class ShelterMapper {
                 .latitude(dto.getLatitude())
                 .longitude(dto.getLongitude())
                 .tel(dto.getTel())
+                .detailAddress(dto.getDetailAddress())
                 .build();
     }
 }

@@ -27,16 +27,19 @@ public class ShelterDto {
 
     private String tel;
 
+    private String detailAddress;
+
     private Region region;
 
     public ShelterDto(Long id, ShelterCategory shelterCategory, String name, Double latitude,
-            Double longitude, String tel, Region region) {
+            Double longitude, String tel, String detailAddress, Region region) {
         this.id = id;
         this.shelterCategory = shelterCategory;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.tel = tel;
+        this.detailAddress = detailAddress;
         this.region = region;
     }
 }

@@ -17,10 +17,14 @@ public class ShelterResponseDto {
 
     private String tel;
 
-    public ShelterResponseDto(String name, Double latitude, Double longitude, String tel) {
+    private String detailAddress;
+
+    public ShelterResponseDto(String name, Double latitude, Double longitude, String tel,
+            String detailAddress) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.tel = tel;
+        this.detailAddress = detailAddress;
     }
 }
