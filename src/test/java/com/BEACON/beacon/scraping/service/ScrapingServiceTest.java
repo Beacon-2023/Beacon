@@ -37,7 +37,7 @@ public class ScrapingServiceTest {
     @BeforeEach
     void setup() {
         scrapingRepository = Mockito.mock(ScrapingRepository.class);
-        scrapingService = new ScrapingService(null, null, scrapingRepository);
+       scrapingService = new ScrapingService(null, null, scrapingRepository,null);
     }
 
     @Test
