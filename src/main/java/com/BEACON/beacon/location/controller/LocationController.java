@@ -31,7 +31,7 @@ public class LocationController {
     @PostMapping("/location-token")
     public ResponseEntity<HttpStatus> processLocationAndToken(@RequestBody @Valid LocationDto locationDto) throws Exception {
         //해당 위치(위도,경도)에 대한 법정동코드 가져오기
-       String legalDongCode = locationApiService.findLegalDongCode( locationDto.getLongitude(),locationDto.getLatitude());
+        String legalDongCode = locationApiService.findLegalDongCode( locationDto.getLongitude(),locationDto.getLatitude());
 
         locationApiService.storeRegionAndFcmToken(locationDto.getFcmToken(),legalDongCode);
 
