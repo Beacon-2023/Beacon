@@ -111,6 +111,11 @@ public class LocationApiService {
     }
 
 
+    /**
+     * 인자로 전달한 법정동코드에 속한 fcmToken 리스트를 반환합니다
+     * @param legalDongList
+     * @return
+     */
     public List<String> findFcmTokenByLegalDongList(List<String> legalDongList) {
       return  regionTokenRepository.findByLegalDongCodeIn(legalDongList)
                 .stream().map(RegionTokenEntity::getFcmToken).collect(Collectors.toList());

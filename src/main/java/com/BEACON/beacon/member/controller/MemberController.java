@@ -5,6 +5,9 @@ import com.BEACON.beacon.member.dto.MemberDto;
 import com.BEACON.beacon.member.request.MemberLoginRequestDto;
 import com.BEACON.beacon.member.service.MemberService;
 import com.BEACON.beacon.member.service.SessionLoginService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +21,15 @@ import static com.BEACON.beacon.global.HttpStatusResponse.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/members")
+@Tag(name="Member")
 public class MemberController {
 
     private final MemberService memberService;
     private final SessionLoginService sessionLoginService;
 
-    /**
-     * 고객이 입력한 정보로 회원가입을 진행한다.
-     * 201: 회원가입 성공
-     * 403: 아이디 중복
-     */
+    @Operation(summary = "회원가입", description = "제공된 회원정보를 등록합니다")
+    @ApiResponse(responseCode = "201", description = "등록 성공")
+    @ApiResponse(responseCode = "403", description = "중복되는 아이디 존재")
     @PostMapping
     public ResponseEntity<HttpStatus> signUp(@RequestBody @Valid MemberDto memberDto) {
 
@@ -42,11 +44,10 @@ public class MemberController {
         return RESPONSE_CREATED;
     }
 
-    /**
-     * 회원가입 시 이메일의 중복체크를 진행한다.
-     * 200: 이메일 사용가능
-     * 409: 이메일 중복
-     */
+
+    @Operation(summary = "가입 시 이메일 중복 여부 확인")
+    @ApiResponse(responseCode = "200", description = "사용가능한 이메일")
+    @ApiResponse(responseCode = "409", description = "이미 사용 중인 이메일")
     @GetMapping("/duplicated/{email}")
     public ResponseEntity<HttpStatus> isDuplicatedEmail(@PathVariable String email) {
         boolean isDuplicatedEmail = memberService.isDuplicatedEmail(email);
@@ -57,14 +58,10 @@ public class MemberController {
         return RESPONSE_OK;
     }
 
-    /**
-     * 로그인을 요청.
-     * @param memberDto : 클라이언트에서 입력된 로그인 요청(아이디,비밀번호)
-     * @param request : Http Request
-     * @return
-     * 200: 로그인 성공
-     * 400: 유효하지 않은 유저아이디 / 비밀번호 입니다
-     */
+
+    @Operation(summary = "회원 로그인", description = "제공된 회원 정보로 로그인")
+    @ApiResponse(responseCode = "200", description = "로그인 성공")
+    @ApiResponse(responseCode = "400", description = "유효하지 않은 아이디/비밀번호")
     @PostMapping("/login")
     public ResponseEntity<HttpStatus> login(@RequestBody @Valid MemberLoginRequestDto memberDto, HttpServletRequest request){
 
@@ -83,6 +80,8 @@ public class MemberController {
      * @param request
      * @return 200 : 로그아웃 성공
      */
+    @Operation(summary = "로그아웃")
+    @ApiResponse(responseCode = "200", description = "로그아웃 성공")
     @LoginRequired
     @GetMapping("/logout")
     public ResponseEntity<HttpStatus> logout(HttpServletRequest request) {

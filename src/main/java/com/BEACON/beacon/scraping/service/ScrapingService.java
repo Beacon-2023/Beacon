@@ -2,6 +2,7 @@ package com.BEACON.beacon.scraping.service;
 
 import static com.BEACON.beacon.scraping.mapper.DisasterAlertMapper.toEntity;
 
+import com.BEACON.beacon.fcm.service.FcmTokenService;
 import com.BEACON.beacon.region.domain.RegionAlert;
 import com.BEACON.beacon.region.dto.RegionAlertDto;
 import com.BEACON.beacon.region.dto.RegionDto;
@@ -42,6 +43,8 @@ public class ScrapingService {
     private final RegionAlertService regionAlertService;
 
     private final ScrapingRepository repository;
+
+    private final FcmTokenService fcmTokenService;
 
     /**
      * 소스로부터 재난 정보를 10초마다 한 번씩 스크래핑합니다.
@@ -149,6 +152,7 @@ public class ScrapingService {
             // 중복된 재난의 경우 DB에 저장하지 않는다.
             if (isUniqueAlert(dto)) {
                 repository.save(toEntity(dto));
+                fcmTokenService.sendDisasterPushMessage(dto);
             }
         }
     }
