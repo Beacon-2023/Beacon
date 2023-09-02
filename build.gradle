@@ -63,6 +63,10 @@ dependencies {
 	// gson
 	implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
 
+
+	// mysql
+	runtimeOnly 'mysql:mysql-connector-java:8.0.33'
+
 }
 
 tasks.named('test') {

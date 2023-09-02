@@ -43,5 +43,11 @@ application-prod.yml
 ### Firebase Patch ###
 .runtimeconfig.json
 .firebase/
+firebase/beacon-f5f95-firebase-adminsdk-1eafi-7ab6bafbf7.json
 
+### 카카오 API 키
 src/main/resources/application-API-KEY.properties
+
+### 배포 설정 파일
+application-deploy.yml
+

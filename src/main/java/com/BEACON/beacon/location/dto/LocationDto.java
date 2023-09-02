@@ -9,11 +9,11 @@ import lombok.Getter;
 @Schema(description = "위치 정보 및 fcm 토큰 전달 객체")
 public class LocationDto {
 
-    @NotEmpty
+
     @Schema(description = "위도")
     Double latitude;
 
-    @NotEmpty
+
     @Schema(description = "경도")
     Double longitude;
 
