@@ -12,6 +12,8 @@ import com.BEACON.beacon.region.dto.RegionAlertDto;
 import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FcmTokenService {
+    private Logger logger = LoggerFactory.getLogger(FcmTokenService.class);
     private final MemberService memberService;
     private final FcmTokenRepository fcmTokenRepository;
     private final FcmTokenMapper fcmTokenMapper;
@@ -32,7 +35,7 @@ public class FcmTokenService {
         MemberEntity member;
         FcmTokenEntity fcmTokenEntity;
 
-        if(fcmTokenDto.getUserName()!=null){
+        if(!fcmTokenDto.getUserName().isEmpty()){
           member =  memberService.findMemberByUserName(fcmTokenDto.getUserName());
           fcmTokenEntity =  fcmTokenMapper.toMemberEntity(fcmTokenDto,member);
         }else{
@@ -60,6 +63,8 @@ public class FcmTokenService {
                 String FCMTitle = "재난문자";
                 firebaseCloudMessageService.sendMessageTo(token, FCMTitle,disasterAlertDto.getContent());
             } catch (IOException e) {
+                String detailMessage = String.format("IOException: 재난문자를 %s 토큰에 보내는 것을 실패하였습니다.",token);
+                logger.warn(detailMessage);
                 throw new RuntimeException(e);
             }
         }
