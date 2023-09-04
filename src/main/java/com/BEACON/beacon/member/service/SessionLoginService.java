@@ -23,7 +23,7 @@ public class SessionLoginService {
         HttpSession session = request.getSession();
         session.setAttribute(LOGIN_MEMBER,sessionDto);
         //세션 만료시간 무한대
-        session.setMaxInactiveInterval(-1);
+        session.setMaxInactiveInterval(30*60);
     }
 
     public void logout(HttpServletRequest request) {

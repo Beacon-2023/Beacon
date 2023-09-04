@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FcmTokenService {
-    private Logger logger = LoggerFactory.getLogger(FcmTokenService.class);
+    private final Logger logger = LoggerFactory.getLogger(FcmTokenService.class);
     private final MemberService memberService;
     private final FcmTokenRepository fcmTokenRepository;
     private final FcmTokenMapper fcmTokenMapper;
