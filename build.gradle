@@ -42,6 +42,7 @@ dependencies {
 	// spring-session-jdbc
 	implementation group: 'org.springframework.session', name: 'spring-session-jdbc', version: '3.0.1'
 
+
 	// jsoup
 	implementation 'org.jsoup:jsoup:1.16.1'
 

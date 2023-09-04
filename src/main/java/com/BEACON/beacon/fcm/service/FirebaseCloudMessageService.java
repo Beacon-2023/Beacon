@@ -24,7 +24,7 @@ public class FirebaseCloudMessageService {
 
 
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "firebase/beacon-f5f95-firebase-adminsdk-1eafi-7017a1d13e.json";
+        String firebaseConfigPath = "firebase/beacon-f5f95-firebase-adminsdk-1eafi-7ab6bafbf7.json";
 
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())

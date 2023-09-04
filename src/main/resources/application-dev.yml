@@ -20,8 +20,7 @@ spring:
     jdbc:
       initialize-schema: always
 
-logging.level:
-  org.hibernate.SQL: debug
+
 
 # swagger-ui path
 springdoc:
