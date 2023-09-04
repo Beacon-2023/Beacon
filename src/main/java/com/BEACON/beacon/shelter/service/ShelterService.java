@@ -29,7 +29,7 @@ public class ShelterService {
 
     public List<ShelterDto> findNearestShelters(Double x, Double y, ShelterCategory category,
             Integer count) {
-        return repository.findNearestShelters(x, y, category, count).stream()
+        return repository.findNearestShelters(x, y, category.toString(), count).stream()
                 .map(ShelterMapper::toDto)
                 .collect(Collectors.toList());
     }

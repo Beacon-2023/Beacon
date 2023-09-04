@@ -15,15 +15,15 @@ public interface ShelterRepository extends JpaRepository<Shelter, Long> {
     Optional<Shelter> findShelterById(Long id);
 
     @Query(value = "SELECT *, " +
-            "(:x - x) * (:x - x) + (:y - y) * (:y - y) AS distance " +
-            "FROM shelter " +
-            "WHERE category = :category " +
+            "(:x - LATITUDE) * (:x - LATITUDE) + (:y - LONGITUDE) * (:y - LONGITUDE) AS distance " +
+            "FROM SHELTER " +
+            "WHERE SHELTER_CATEGORY = :category " +
             "ORDER BY distance " +
             "LIMIT :count", nativeQuery = true)
     List<Shelter> findNearestShelters(
             @Param("x") Double x,
             @Param("y") Double y,
-            @Param("category") ShelterCategory category,
+            @Param("category") String category,
             @Param("count") Integer count);
 }
 
