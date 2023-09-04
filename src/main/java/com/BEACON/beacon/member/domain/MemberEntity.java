@@ -1,10 +1,13 @@
 package com.BEACON.beacon.member.domain;
 
 import com.BEACON.beacon.global.BaseTimeEntity;
+import com.BEACON.beacon.guideline.domain.CustomGuideLineEntity;
 import com.BEACON.beacon.member.MemberStatus;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +27,9 @@ public class MemberEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
+    @OneToMany(mappedBy = "memberEntity")
+    private List<CustomGuideLineEntity> customGuideLineEntityList;
+
     public MemberEntity(){
     }
     @Builder
@@ -34,7 +40,9 @@ public class MemberEntity extends BaseTimeEntity {
         this.status = status;
     }
 
-
+    public void addCustomGuideLineEntityList(CustomGuideLineEntity customGuideLineEntity){
+        customGuideLineEntityList.add(customGuideLineEntity);
+    }
 
 
 }
