@@ -44,12 +44,5 @@ public class DisasterAlert {
         this.regionAlertList = regionAlertList;
     }
 
-    public void addRegionAlert(RegionAlertDto dto) {
-        RegionAlert entity = RegionMapper.toEntity(dto);
-        this.regionAlertList.add(entity);
-        if (entity.getDisasterAlert() != this) {
-            entity.setDisasterAlert(DisasterAlertMapper.toDto(this));
-        }
-    }
 }
 

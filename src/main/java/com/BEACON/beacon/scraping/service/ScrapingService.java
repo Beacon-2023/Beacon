@@ -12,6 +12,7 @@ import com.BEACON.beacon.region.service.RegionService;
 import com.BEACON.beacon.scraping.domain.DisasterAlert;
 import com.BEACON.beacon.scraping.domain.DisasterCategory;
 import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
+import com.BEACON.beacon.scraping.mapper.DisasterAlertMapper;
 import com.BEACON.beacon.scraping.repository.ScrapingRepository;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ScrapingService {
 
     // 국민재난안전포털 메인 페이지
@@ -145,6 +147,7 @@ public class ScrapingService {
      *
      * @param disasterSmsList 저장할 재난 정보를 포함한 JSONArray
      */
+    @Transactional
     void saveDisasterInfo(JSONArray disasterSmsList) {
         for (int i = 0; i < disasterSmsList.length(); i++) {
             JSONObject obj = disasterSmsList.getJSONObject(i);
@@ -153,11 +156,10 @@ public class ScrapingService {
             // 중복된 재난의 경우 DB에 저장하지 않는다.
             if (isUniqueAlert(dto)) {
                 DisasterAlert savedDisasterAlert = scrapingRepository.save(toEntity(dto));
-
-                List<RegionAlert> regionAlertList = savedDisasterAlert.getRegionAlertList();
-                for (RegionAlert regionAlert : regionAlertList) {
-                    savedDisasterAlert.addRegionAlert(RegionMapper.toDto(regionAlert));
-                }
+//                List<RegionAlert> regionAlertList = savedDisasterAlert.getRegionAlertList();
+//                for (RegionAlert regionAlert : regionAlertList) {
+//                    regionAlert.setDisasterAlert(DisasterAlertMapper.toDto(savedDisasterAlert));
+//                }
 
                 fcmTokenService.sendDisasterPushMessage(dto);
             }

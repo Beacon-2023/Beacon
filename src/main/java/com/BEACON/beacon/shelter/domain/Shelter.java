@@ -35,12 +35,10 @@ public class Shelter {
 
     private String detailAddress;
 
-    @ManyToOne
-    @JoinColumn(name = "REGION_CODE")
-    private Region region;
+    private Integer regionCode;
 
     public Shelter(Long id, ShelterCategory shelterCategory, String name, Double latitude,
-            Double longitude, String tel, String detailAddress, Region region) {
+            Double longitude, String tel, String detailAddress, Integer regionCode) {
         this.id = id;
         this.shelterCategory = shelterCategory;
         this.name = name;
@@ -48,6 +46,6 @@ public class Shelter {
         this.longitude = longitude;
         this.tel = tel;
         this.detailAddress = detailAddress;
-        this.region = region;
+        this.regionCode = regionCode;
     }
 }
