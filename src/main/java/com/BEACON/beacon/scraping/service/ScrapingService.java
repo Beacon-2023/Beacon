@@ -1,14 +1,15 @@
 package com.BEACON.beacon.scraping.service;
 
-import static com.BEACON.beacon.scraping.dto.DisasterAlertMapper.toEntity;
+import static com.BEACON.beacon.scraping.mapper.DisasterAlertMapper.toEntity;
 
 import com.BEACON.beacon.fcm.service.FcmTokenService;
 import com.BEACON.beacon.region.domain.RegionAlert;
 import com.BEACON.beacon.region.dto.RegionAlertDto;
 import com.BEACON.beacon.region.dto.RegionDto;
-import com.BEACON.beacon.region.dto.RegionMapper;
+import com.BEACON.beacon.region.mapper.RegionMapper;
 import com.BEACON.beacon.region.service.RegionAlertService;
 import com.BEACON.beacon.region.service.RegionService;
+import com.BEACON.beacon.scraping.domain.DisasterAlert;
 import com.BEACON.beacon.scraping.domain.DisasterCategory;
 import com.BEACON.beacon.scraping.dto.DisasterAlertDto;
 import com.BEACON.beacon.scraping.repository.ScrapingRepository;
@@ -42,7 +43,7 @@ public class ScrapingService {
 
     private final RegionAlertService regionAlertService;
 
-    private final ScrapingRepository repository;
+    private final ScrapingRepository scrapingRepository;
 
     private final FcmTokenService fcmTokenService;
 
@@ -151,7 +152,13 @@ public class ScrapingService {
 
             // 중복된 재난의 경우 DB에 저장하지 않는다.
             if (isUniqueAlert(dto)) {
-                repository.save(toEntity(dto));
+                DisasterAlert savedDisasterAlert = scrapingRepository.save(toEntity(dto));
+
+                List<RegionAlert> regionAlertList = savedDisasterAlert.getRegionAlertList();
+                for (RegionAlert regionAlert : regionAlertList) {
+                    savedDisasterAlert.addRegionAlert(RegionMapper.toDto(regionAlert));
+                }
+
                 fcmTokenService.sendDisasterPushMessage(dto);
             }
         }
@@ -171,8 +178,7 @@ public class ScrapingService {
 
         String createdAt = obj.getString("CREAT_DT");
         String content = obj.getString("MSG_CN");
-        List<RegionAlertDto> regionAlertDtoList
-            = buildRegionAlertDtoList(obj.getString("RCV_AREA_ID"));
+        List<RegionAlertDto> regionAlertDtoList = buildRegionAlertDtoList(obj.getString("RCV_AREA_ID"));
 
         return new DisasterAlertDto(alertId, disasterCategory, createdAt, content,
                 regionAlertDtoList);
@@ -204,9 +210,9 @@ public class ScrapingService {
         RegionDto regionDto = regionService.findRegionByCode(regionCode);
         RegionAlert regionAlert = new RegionAlert();
         regionAlert.setRegion(regionDto);
-        regionAlertService.saveRegionAlert(RegionMapper.toDto(regionAlert));
+        Long savedRegionAlertId = regionAlertService.saveRegionAlert(RegionMapper.toDto(regionAlert));
 
-        return RegionMapper.toDto(regionAlert);
+        return regionAlertService.findRegionAlertById(savedRegionAlertId);
     }
 
     /**
@@ -245,7 +251,7 @@ public class ScrapingService {
      *         false : 새로운 재난문자
      */
     boolean isUniqueAlert(DisasterAlertDto dto) {
-        return !repository.existsById(dto.getId());
+        return !scrapingRepository.existsById(dto.getId());
     }
 
 }

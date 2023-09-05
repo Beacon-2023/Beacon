@@ -2,7 +2,7 @@ package com.BEACON.beacon.region.service;
 
 import com.BEACON.beacon.region.domain.RegionAlert;
 import com.BEACON.beacon.region.dto.RegionAlertDto;
-import com.BEACON.beacon.region.dto.RegionMapper;
+import com.BEACON.beacon.region.mapper.RegionMapper;
 import com.BEACON.beacon.region.exception.NoSuchRegionAlertException;
 import com.BEACON.beacon.region.repository.RegionAlertRepository;
 import lombok.RequiredArgsConstructor;
