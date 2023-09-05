@@ -147,7 +147,6 @@ public class ScrapingService {
      *
      * @param disasterSmsList 저장할 재난 정보를 포함한 JSONArray
      */
-    @Transactional
     void saveDisasterInfo(JSONArray disasterSmsList) {
         for (int i = 0; i < disasterSmsList.length(); i++) {
             JSONObject obj = disasterSmsList.getJSONObject(i);
