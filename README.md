@@ -20,7 +20,7 @@
 ![image](https://github.com/Beacon-2023/Beacon-backend/assets/82764703/9cad8142-b720-4fe0-a168-3b5207489683)
 
 ## 프로젝트 아키텍처 
-<img width="600" alt="image" src="https://github.com/Beacon-2023/Beacon-backend/assets/82764703/f3639313-8fd6-4081-8fa3-90bfb375a8ed">
+<img width="800" alt="image" src="https://github.com/Beacon-2023/Beacon-backend/assets/82764703/f3639313-8fd6-4081-8fa3-90bfb375a8ed">
 
 프론트 아키텍처는 https://github.com/Beacon-2023/Beacon-frontend 에서 확인할 수 있습니다.
 
