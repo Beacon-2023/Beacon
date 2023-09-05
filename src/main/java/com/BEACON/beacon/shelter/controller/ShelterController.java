@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,8 +34,8 @@ public class ShelterController {
     @Parameter(name = "y", description = "반환할 대피소 개수")
     @Parameter(name = "count", description = "반환할 대피소 개수")
     @Parameter(name = "shelterCategory", description = "요청할 대피소 종류. Schema 참조")
-    @GetMapping
-    public ResponseEntity<List<ShelterResponseDto>> findShelters(@RequestBody @Valid ShelterRequestDto dto) {
+    @PostMapping
+    public ResponseEntity<List<ShelterResponseDto>> findShelters(@Valid @RequestBody ShelterRequestDto dto) {
         List<ShelterResponseDto> list = shelterService.findNearestShelters(dto.getX(), dto.getY(),
                         dto.getShelterCategory(), dto.getCount())
                 .stream()
