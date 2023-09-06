@@ -29,10 +29,10 @@ public class ShelterDto {
 
     private String detailAddress;
 
-    private Region region;
+    private Integer regionCode;
 
     public ShelterDto(Long id, ShelterCategory shelterCategory, String name, Double latitude,
-            Double longitude, String tel, String detailAddress, Region region) {
+            Double longitude, String tel, String detailAddress, Integer regionCode) {
         this.id = id;
         this.shelterCategory = shelterCategory;
         this.name = name;
@@ -40,6 +40,6 @@ public class ShelterDto {
         this.longitude = longitude;
         this.tel = tel;
         this.detailAddress = detailAddress;
-        this.region = region;
+        this.regionCode = regionCode;
     }
 }

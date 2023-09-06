@@ -18,6 +18,8 @@ public interface ShelterRepository extends JpaRepository<Shelter, Long> {
             "(:x - LATITUDE) * (:x - LATITUDE) + (:y - LONGITUDE) * (:y - LONGITUDE) AS distance " +
             "FROM SHELTER " +
             "WHERE SHELTER_CATEGORY = :category " +
+            "AND LATITUDE IS NOT NULL " +
+            "AND LONGITUDE IS NOT NULL " +
             "ORDER BY distance " +
             "LIMIT :count", nativeQuery = true)
     List<Shelter> findNearestShelters(
