@@ -10,11 +10,8 @@
 
 자세한 주요기능은 https://github.com/Beacon-2023/Beacon-frontend 에서 확인할 수 있습니다.
 ## 시연 영상
-하단 이미지를 클릭하면 영상을 시청할 수 있습니다.
-<a href="https://www.youtube.com/watch?v=2kt1DZehcwI&ab_channel=%EC%8B%A0%EA%B7%BC%EC%9E%AC" rel="nofollow">
- <img src= "https://github.com/Beacon-2023/Beacon-backend/assets/82764703/6d0629be-65d9-497e-a366-c0cdd2bc7895">
-</a>
-
+하단 이미지를 클릭하면 영상을 시청할 수 있습니다.<br>
+[![Video Label](https://i.ytimg.com/vi/2kt1DZehcwI/sddefault.jpg)](https://www.youtube.com/watch?v=2kt1DZehcwI&ab_channel=%EC%8B%A0%EA%B7%BC%EC%9E%AC)
 
 ## 개발언어 & 환경
 ### 백엔드: 
