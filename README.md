@@ -22,7 +22,7 @@
 - 인프라: AWS EC2 , AWS RDS , Firebase Clude Messaging
 - DB: MySQL
 - 개발 도구: IntelliJ
-- 라이브러리: Jsoup
+- 라이브러리: Jsoup, JSON, OkHttp, Swagger3
 2. 개발 언어 및 프레임워크
 - 언어: Java 17
 - 프레임워크: Spring Boot 3.1.2
@@ -58,9 +58,9 @@ http://43.202.105.197:8080/swagger
    국민재난안전포털 사이트의 재난문자 스크래핑
 </a>
 
- - SpringBoot에서 @Scheduling으로 10초마다 스크래핑
- - 스크래핑한 문자들은 중복확인을 거치고 필요한 재난문자들의 지역코드,발송시각,재난내용 그리고 재난 유형을 뽑아서 DB에 저장
- - 다음 PR에서 자세한 코드를 볼 수 있습니다 : https://github.com/Beacon-2023/Beacon-backend/pull/23
+   - SpringBoot에서 @Scheduling으로 10초마다 스크래핑
+   - 스크래핑한 문자들은 중복확인을 거치고 필요한 재난문자들의 지역코드,발송시각,재난내용 그리고 재난 유형을 뽑아서 DB에 저장
+   - 다음 PR에서 자세한 코드를 볼 수 있습니다 : https://github.com/Beacon-2023/Beacon-backend/pull/23
 <img width="744" alt="스크린샷 2023-09-07 오후 2 33 56" src="https://github.com/Beacon-2023/Beacon-backend/assets/82764703/7b70d09a-49ab-42da-80d3-ee9387d84995">
 
 2. <b>FCM을 사용하여 재난문자 푸시알림</b>
