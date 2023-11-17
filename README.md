@@ -48,7 +48,10 @@ https://luck-hurricane-634.notion.site/1cabe7a63abd4e5fbb100bca0702e2e8?pvs=4
 ![image](https://github.com/Beacon-2023/Beacon-backend/assets/82764703/4f3d1ef6-47da-4b34-a9d0-5d2cb83c2c70)
 
 ## 라이브 API 서버
-http://43.202.105.197:8080/swagger
+http://43.202.105.197:8080/swagger (중단)
+![image](https://github.com/Beacon-2023/Beacon-backend/assets/82764703/f4dbcdd9-43aa-4bcb-b77b-3980ea437a74)
+
+
 
 ## 플로우 차트 
 1. <a href="https://www.safekorea.go.kr/idsiSFK/neo/sfk/cs/sfc/dis/disasterMsgList.jsp?menuSeq=679">
